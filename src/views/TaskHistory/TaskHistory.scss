@@ -1,0 +1,83 @@
+.Table{
+  //text-align: center;
+}
+
+.Table th{
+  background-color: white;
+  padding-left: 10px;
+}
+
+.Table td{
+  padding-left: 10px;
+  vertical-align: middle!important;
+}
+
+.Table img{
+  margin-right: 5px;
+}
+
+.Table Button{
+  margin:5px;
+}
+
+.btn-align{
+  text-align: center!important;
+}
+
+.DropDownHead{
+  background-color: #f0f1f3;
+  color: gray;
+}
+
+.PackageSelectTitle{
+  margin-left: 20px;
+  margin-right: 10px;
+  color: #5c6873;
+  font-size: 15.5px;
+}
+
+.SelectContainer{
+  background-color: #C8CED3!important;
+  height: 35px!important;
+  border-radius: 5px;
+}
+
+.CountryDropdown{
+  background-color: #C8CED3!important;
+  height: 35px!important;
+  //margin-top: 5px;
+  border: 0!important;
+  //margin-left: 10px;
+  margin: 0!important;
+}
+
+.max-width{
+  max-width: 218px!important;
+}
+
+
+// .SelectContainer:hover{
+//   background-color: #B3BBC2!important;
+//}
+
+.CountryDropdown:focus{
+  outline: 0!important;
+  border: 1px solid #c8ced3 !important;
+  box-sizing: border-box!important;
+}
+
+.closeBtn{
+  margin-left: 10px;
+  cursor: pointer;
+  position: relative;
+  top: -5px;
+  right: 10px;
+}
+
+.closeBtn2{
+  margin-left: 10px;
+  cursor: pointer;
+  position: relative;
+  top: -2px;
+  right: 10px;
+}

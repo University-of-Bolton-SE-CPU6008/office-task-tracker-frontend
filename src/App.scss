@@ -1,0 +1,104 @@
+@import './scss/style.scss';
+@import '~flag-icon-css/css/flag-icon.min.css';
+// Import Font Awesome Icons Set
+@import '~font-awesome/css/font-awesome.min.css';
+// Import Simple Line Icons Set
+@import '~simple-line-icons/css/simple-line-icons.css';
+
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-calendars/styles/material.css";
+
+.toast-error {
+  background-color: #BD362F!important;
+}
+.toast-success {
+  background-color: #51A351!important;
+}
+.toast-warning {
+  background-color: #F89406!important;
+}
+.auth-bg{
+  text-align: center;
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  background-image: linear-gradient(79deg, #7439db, #C66FBC 48%, #F7944D);
+
+  label {
+    text-align: left;
+    padding: 0.25rem 0;
+  }
+
+  input {
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border: none;
+    border-radius: 10px;
+  }
+
+  .button-auth {
+    border: none;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #7439db;
+  }
+}
+
+.auth-form-container, .login-form, .register-form {
+  display: flex;
+  flex-direction: column;
+}
+
+
+@media screen and (min-width: 600px) {
+  .auth-form-container {
+    padding: 5rem;
+    border: 1px solid white;
+    border-radius: 10px;
+    margin: 0.5rem;
+  }
+  .auth-container{
+    border: 1px solid white;
+    border-radius: 10px;
+    padding: 6% 2% 6% 2%;
+  }
+}
+
+.link-btn {
+  border: none;
+  background: none;
+  color: white;
+  text-decoration: underline;
+  padding: 20px;
+}
+
+.forgot-btn-link{
+  border: none;
+  background: none;
+  color: white;
+  text-decoration: underline;
+  text-align: left;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.cover-img{
+  object-fit: cover!important;
+}
+
+.text-des {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* number of lines to show */
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

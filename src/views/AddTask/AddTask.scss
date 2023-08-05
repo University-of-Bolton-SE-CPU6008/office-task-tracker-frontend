@@ -1,0 +1,207 @@
+.Table{
+  //text-align: center;
+}
+
+.Table tr{
+  background-color: white;
+}
+
+.Table td{
+  padding-left: 10px;
+  vertical-align: middle!important;
+}
+
+.DescriptionTD{
+  max-width: 320px;
+}
+
+.btn-align{
+  text-align: center!important;
+}
+
+.Table Button{
+  margin:5px
+}
+
+.PackageSelectTitle{
+  margin-left: 20px;
+  margin-right: 10px;
+  color: #5c6873;
+  font-size: 15.5px;
+}
+
+.TotalPrice{
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: right
+}
+
+.TableRow{
+  padding-top: 15px!important;
+  padding-bottom: 15px!important;
+}
+
+////////////////////////////////////////////////////////////
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.App ul {
+  margin: 0;
+}
+
+.App span {
+  font-size: 2rem;
+  color: #777;
+}
+
+.dropzone {
+  height: 250px;
+  cursor: pointer;
+  text-align: center;
+  padding-top: 75px;
+  border: 2px solid #e5e5e5;
+  background-color: white;
+  color: #bdbdbd;
+  transition: border-color .15s linear;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.EditableStyle{
+  height: 250px;
+  cursor: pointer;
+  text-align: center;
+  border: 2px solid #e5e5e5;
+  background-color: white;
+  color: #bdbdbd;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.EditableStyle>i{
+  position:relative;
+  top: calc(-50% - 10px);
+}
+
+.EditableStyle>strong{
+  position:relative;
+  top: calc(50% - 10px);
+}
+
+.EditableStyle img{
+  position: relative;
+  z-index: 0;
+}
+
+.EditableStyle i{
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+  padding: 10px;
+  border-radius: 1000px;
+}
+
+.dropzone:hover {
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+      -45deg, #f6f6f6 25%, transparent 25%, transparent 50%, #f6f6f6 50%, #f6f6f6 75%, transparent 75%, transparent);
+  -webkit-animation:progress 2s linear infinite;
+  -moz-animation:progress 2s linear infinite;
+  -ms-animation:progress 2s linear infinite;
+  animation:progress 2s linear infinite;
+}
+
+@-webkit-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}
+@-moz-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}
+@-ms-keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -75px 0px;
+  }
+}
+@keyframes progress{
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -70px 0px;
+  }
+}
+
+.dropzone::after, .dropzone::before {
+  box-sizing: border-box;
+}
+
+.accept {
+  border-color: #107c10 !important;
+}
+
+.reject {
+  border-color: #d83b01 !important;
+}
+
+img {
+  max-width: 100%;
+}
+
+.CropDiv{
+  width:50%;
+  height: 250px;
+}
+
+.ReactCrop {
+  //width: 100%;
+  //height: 100%;
+  object-fit: contain;
+  //background-color: black;
+  box-shadow: 0px 0px 5px #3a4248;
+}
+
+.CancelButton {
+  width:20px;
+}
+
+.closeBtn {
+  height: 40px;
+  line-height: 40px;
+  width: 40px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 100%;
+  background-color:  #ff1a1a;
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 0px 10px #e78267;
+  margin: 20px;
+}
+
+.closeBtn:hover{
+  transform: translateY(-2px);
+}
+
+.Load{
+  text-align: center;
+}
+
+.backdropClassName{
+  background-color: #107c10;
+}
