@@ -7,7 +7,7 @@ export default {
       icon: 'icon-puzzle',
     },
     {
-      name: 'Product Request',
+      name: 'Task History',
       url: BASE_URL+'/task-history',
       icon: 'icon-people',
     },
