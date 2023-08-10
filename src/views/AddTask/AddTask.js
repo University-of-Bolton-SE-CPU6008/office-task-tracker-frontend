@@ -18,7 +18,8 @@ import {
   ModalFooter,
   ModalHeader,
   Row,
-  Table
+  Table,
+  Form
 } from "reactstrap";
 import {Link} from "react-router-dom";
 import {BASE_URL} from "../../constance/Constance";
@@ -34,7 +35,18 @@ import * as Validations from "../../validation/Validation";
 
 class AddTask extends Component {
   state = {
-    list: [],
+    list: [
+      {
+        projectId: 1,
+        projectName: 'Project 01',
+        designation: 'Frontend Developer'
+      },
+      {
+        projectId: 2,
+        projectName: 'Project 02',
+        designation: 'Backend Developer'
+      }
+    ],
     selectedPage: 1,
     totalElements: 0,
     searchTxt: {
@@ -42,6 +54,7 @@ class AddTask extends Component {
       valid: true
     },
     modelVisible: false,
+    involveProjectVisible: false,
     loading: false,
     asSearch: false,
     editEnabled: false,
@@ -62,8 +75,8 @@ class AddTask extends Component {
   }
 
   async componentDidMount() {
-    await this.getAllCategories();
-    await this.getAllProducts();
+    // await this.getAllCategories();
+    // await this.getAllProducts();
   }
 
   getAllCategories = async () => {
@@ -83,7 +96,7 @@ class AddTask extends Component {
         }
       })
       .catch(err => {
-       console.log(err)
+        console.log(err)
       })
   }
 
@@ -164,17 +177,17 @@ class AddTask extends Component {
 
     if (!Validations.textFieldValidator(this.state.productName, 1)) {
       CommonFunc.notifyMessage('Please enter product name', 0);
-    }else if (!Validations.textFieldValidator(this.state.description, 1)){
+    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (!Validations.numberValidator(this.state.unitPrice)){
+    } else if (!Validations.numberValidator(this.state.unitPrice)) {
       CommonFunc.notifyMessage('Please enter valid price', 0);
-    }else if (!Validations.textFieldValidator(this.state.description, 1)){
+    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (!Validations.textFieldValidator(this.state.description, 1)){
+    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (this.state.selectedCategory.length === 0){
+    } else if (this.state.selectedCategory.length === 0) {
       CommonFunc.notifyMessage('Please select category', 0);
-    }else {
+    } else {
       this.setState({loading: true})
       const data = {
         name: this.state.productName,
@@ -224,17 +237,17 @@ class AddTask extends Component {
 
     if (!Validations.textFieldValidator(this.state.productName.trim(), 1)) {
       CommonFunc.notifyMessage('Please enter product name', 0);
-    }else if (!Validations.textFieldValidator(this.state.description.trim(), 1)){
+    } else if (!Validations.textFieldValidator(this.state.description.trim(), 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (!Validations.numberValidator(this.state.unitPrice.toString())){
+    } else if (!Validations.numberValidator(this.state.unitPrice.toString())) {
       CommonFunc.notifyMessage('Please enter valid price', 0);
-    }else if (!Validations.textFieldValidator(this.state.description.trim(), 1)){
+    } else if (!Validations.textFieldValidator(this.state.description.trim(), 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (!Validations.textFieldValidator(this.state.description.trim(), 1)){
+    } else if (!Validations.textFieldValidator(this.state.description.trim(), 1)) {
       CommonFunc.notifyMessage('Please enter product description', 0);
-    }else if (this.state.selectedCategory.length === 0){
+    } else if (this.state.selectedCategory.length === 0) {
       CommonFunc.notifyMessage('Please select category', 0);
-    }else {
+    } else {
       let data = {}
 
       if (type === 'STATUS') {
@@ -322,22 +335,17 @@ class AddTask extends Component {
   };
 
   render() {
-    const {totalElements, list, searchTxt, modelVisible, loading, editEnabled, asImageEdit, asSearch, drop, dropdownOpen, imgBase64, selectedPage, src, selectedCategory, category, description, productName, unitPrice} = this.state;
+    const {totalElements, list, searchTxt, modelVisible, loading, editEnabled, asImageEdit, asSearch, drop, dropdownOpen, imgBase64, selectedPage, src, selectedCategory, category, description, productName, unitPrice, involveProjectVisible} = this.state;
 
     const listData = list.map((items, i) => (
       <tr key={i}>
-        <td className={"DescriptionTD"}>{items.productName}</td>
-        <td className={"DescriptionTD"}>{items.description}</td>
-        <td className={'btn-align'}>{items.unitPrice}</td>
-        <td className={'btn-align'}><a href={items.image} target="_blank"><i className="icon-picture"></i></a></td>
+        <td className={"DescriptionTD"}>{items.projectName}</td>
+        <td className={"DescriptionTD"}>{items.designation}</td>
         <td className={'btn-align'}>
-          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status}
-                     onChange={() => this.onUpdateProduct(items, 'STATUS')}/>
-        </td>
-        <td className={'btn-align'}>
-          <Button color="dark" className="btn-pill shadow" onClick={() => this.onTogglePopup(items, true)}>Edit</Button>
+          <Button color="dark" className="btn-pill shadow" onClick={() => this.onTogglePopup(items, true)}>Add
+            Task</Button>
           <Button color="danger" className="btn-pill shadow"
-                  onClick={() => this.deleteHandler(items.productId)}>Delete</Button>
+                  onClick={() => this.deleteHandler(items.productId)}>Edit</Button>
         </td>
       </tr>
     ));
@@ -361,9 +369,10 @@ class AddTask extends Component {
                   </Col>
 
                   <div style={{position: 'absolute', right: 30}}>
-                    <Button color="primary mr-2" className="btn-pill shadow" onClick={this.onTogglePopup}>Add
-                      New</Button>
-                    <Button color="primary" className="btn-pill shadow">Export CSV</Button>
+                    <Button color="primary mr-2" className="btn-pill shadow"
+                            onClick={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}>
+                      Involve Project
+                    </Button>
                   </div>
 
                 </div>
@@ -373,11 +382,8 @@ class AddTask extends Component {
                 <Table hover bordered striped responsive size="sm" className={"Table"}>
                   <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Unit Price (LKR)</th>
-                    <th>Image</th>
-                    <th>Status</th>
+                    <th>Project Name</th>
+                    <th>Designation</th>
                     <th>Actions</th>
                   </tr>
                   </thead>
@@ -388,107 +394,114 @@ class AddTask extends Component {
             </Card>
           </Col>
         </Row>
+
+        <Modal isOpen={involveProjectVisible} toggle={()=>this.setState({involveProjectVisible:!this.state.involveProjectVisible})}
+               className={'modal-lg ' + this.props.className}>
+          <ModalHeader toggle={this.onTogglePopup}>Involved to new Project</ModalHeader>
+          <ModalBody className="pl-5 pr-5">
+            <FormGroup row className="pl-5 pr-5">
+              <Label>Select the project</Label>
+              <Input type="select" name="selectedCategory" onChange={this.onTextChange}>
+                <option value="" disabled={selectedCategory !== ""}>Please select category</option>
+                {category.map(item => (
+                  <option value={item.value} selected={item.value === selectedCategory}>{item.label}</option>
+                ))}
+              </Input>
+            </FormGroup>
+            <FormGroup row className="pl-5 pr-5">
+              <Label>Select Designation</Label>
+              <Input type="select" name="selectedCategory" onChange={this.onTextChange}>
+                <option value="" disabled={selectedCategory !== ""}>Please select category</option>
+                {category.map(item => (
+                  <option value={item.value} selected={item.value === selectedCategory}>{item.label}</option>
+                ))}
+              </Input>
+            </FormGroup>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary"
+              onClick={()=>this.setState({involveProjectVisible:false})}
+            >
+              Done
+            </Button>
+          </ModalFooter>
+        </Modal>
+
         <Modal isOpen={modelVisible} toggle={this.onTogglePopup}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={this.onTogglePopup}>{editEnabled ? 'Edit Product' : 'Add Product'}</ModalHeader>
+          <ModalHeader toggle={this.onTogglePopup}>{'Project Name : Project 01'}</ModalHeader>
 
-          <ModalBody>
-            <Col xs="12" sm="12">
-              <Card>
-                <CardHeader>
-                  <strong>{!editEnabled ? 'Add Product' : 'Edit Product'}</strong>
-                </CardHeader>
-                <CardBody>
+          <ModalBody className="pl-5 pr-5">
+            <Form>
+              <FormGroup row>
+                <Label sm={3}>Select the date</Label>
+                <Col sm={4}>
+                  <Input type="date" name="selectedCategory" onChange={this.onTextChange}/>
+                </Col>
+              </FormGroup>
+              <FormGroup row>
+                <Label sm={3}>Main Features</Label>
+                <Col sm={9}>
+                  <Input type="select" name="selectedCategory" onChange={this.onTextChange}>
+                    <option value="" disabled={selectedCategory !== ""}>Please select category</option>
+                    {category.map(item => (
+                      <option value={item.value} selected={item.value === selectedCategory}>{item.label}</option>
+                    ))}
+                  </Input>
+                </Col>
+              </FormGroup>
 
-                  <FormGroup row className="my-0">
-                    <Col xs="6" className="mt-2">
+              <FormGroup row>
+                <Label sm={3}>Task description</Label>
+                <Col sm={9}>
+                  <Input type="textarea" name="description" placeholder="Description" value={description}
+                         onChange={this.onTextChange}/>
+                </Col>
+              </FormGroup>
 
-                      {asImageEdit ?
-                        <div className={"EditableStyle"} onClick={() => this.setState({asImageEdit: false, src: null})}>
-                          <img src={src} alt="" width={'100%'} height={'100%'}/>
-                          <i className="cui-cloud-upload icons font-2xl"></i>
-                        </div>
-                        :
-                        src ?
-                          <div className={"EditableStyle"}
-                               onClick={() => this.setState({asImageEdit: false, src: null})}>
-                            <img src={src} alt="img" width={'100%'} height={'100%'}/>
-                          </div>
-                          :
-                          <div className={"App"}>
-                            <Dropzone
-                              onDrop={this.handleDrop}
-                              accept="image/*"
-                              minSize={1024}
-                              maxSize={3072000}
-                            >
-                              {({
-                                  getRootProps,
-                                  getInputProps,
-                                  isDragActive,
-                                  isDragAccept,
-                                  isDragReject
-                                }) => {
-                                const additionalClass = isDragAccept
-                                  ? "accept"
-                                  : isDragReject
-                                    ? "reject"
-                                    : "";
+              <FormGroup row>
+                <Label sm={3}>Number of hours</Label>
+                <Row className="pl-3">
+                  <Col sm={3}>
+                    <Input type="text" name="hours" placeholder="Hours" value={productName}
+                           onChange={this.onTextChange}/>
+                  </Col>
+                  <Col sm={3} className="pl-0 ml-0">
+                    <Input type="text" name="minutes" placeholder="Minutes" value={productName}
+                           onChange={this.onTextChange}/>
+                  </Col>
+                </Row>
 
-                                return (
-                                  <div
-                                    {...getRootProps({
-                                      className: `dropzone ${additionalClass}`
-                                    })}
-                                  >
-                                    <input {...getInputProps()} onChange={this.onSelectFile}/>
-                                    <span>{isDragActive ? "📂" : "📁"}</span>
-                                    <p>Drag'n'drop images</p>
-                                  </div>
-                                );
-                              }}
-                            </Dropzone>
-                          </div>
-                      }
+              </FormGroup>
 
-                    </Col>
-                    <Col xs="6">
-                      <FormGroup>
-                        <Label htmlFor="vat">Product Name</Label>
-                        <Input type="text" name="productName" placeholder="Product Name" value={productName}
-                               onChange={this.onTextChange}/>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="vat">Description</Label>
-                        <Input type="textarea" name="description" placeholder="Description" value={description}
-                               onChange={this.onTextChange}/>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="vat">Unit Price</Label>
-                        <Input type="number" name="unitPrice" placeholder="Unit Price" value={unitPrice}
-                               onChange={this.onTextChange}/>
-                      </FormGroup>
-                      <FormGroup>
-                        <Label htmlFor="vat">Category</Label>
-                        <Input type="select" name="selectedCategory" onChange={this.onTextChange}>
-                          <option value="" disabled={selectedCategory !== ""}>Please select category</option>
-                          {category.map(item => (
-                            <option value={item.value} selected={item.value === selectedCategory}>{item.label}</option>
-                          ))}
-                        </Input>
-                      </FormGroup>
-                    </Col>
-                  </FormGroup>
+              <FormGroup row>
+                <Label sm={3}>Task type</Label>
+                <Col sm={5}>
+                  <Input type="select" name="selectedCategory" onChange={this.onTextChange}>
+                    <option value="" disabled={selectedCategory !== ""}>Please select category</option>
+                    {category.map(item => (
+                      <option value={item.value} selected={item.value === selectedCategory}>{item.label}</option>
+                    ))}
+                  </Input>
+                </Col>
+              </FormGroup>
 
-                </CardBody>
-              </Card>
-            </Col>
+              <FormGroup row>
+                <Label sm={3}>Comment</Label>
+                <Col sm={9}>
+                  <Input type="textarea" name="comment" placeholder="Description" value={description}
+                         onChange={this.onTextChange}/>
+                </Col>
+              </FormGroup>
+            </Form>
+
+
           </ModalBody>
 
           <ModalFooter>
             <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
             <Button color="primary"
-                    onClick={!editEnabled ? this.onSaveProduct : this.onUpdateProduct}>{editEnabled ? 'Edit' : 'Add'}</Button>
+                    onClick={!editEnabled ? this.onSaveProduct : this.onUpdateProduct}>{!editEnabled ? 'Edit' : 'Submit'}</Button>
           </ModalFooter>
         </Modal>
 
