@@ -10,7 +10,7 @@ import {
   InputGroup,
   InputGroupAddon, Modal, ModalFooter, ModalHeader,
   Row,
-  Table
+  Table,Label,Alert
 } from "reactstrap";
 import './TaskHistory.scss';
 import * as ProductService from '../../services/product';
@@ -20,12 +20,31 @@ import {DateRangePickerComponent} from '@syncfusion/ej2-react-calendars';
 
 class TaskHistory extends Component {
   state = {
-    list: [],
+    list: [
+      {
+        id:1,
+        date:'2023/06/06',
+        projectName:'Project 01',
+        designation:'Mobile Developer',
+        mainFeatures:'Bug Fixes',
+        taskType:'Development',
+        hours:'2.30'
+      },
+      {
+        id:2,
+        date:'2023/06/07',
+        projectName:'Project 02',
+        designation:'Backend Developer',
+        mainFeatures:'Bug Fixes',
+        taskType:'Development',
+        hours:'5.30'
+      }
+    ],
     loading: true,
   }
 
   async componentDidMount() {
-    await this.getAllProductRequest()
+    // await this.getAllProductRequest()
   }
 
   getAllProductRequest = async () => {
@@ -59,18 +78,12 @@ class TaskHistory extends Component {
     const {list, loading} = this.state;
     const listData = list.map((items, i) => (
       <tr key={i}>
-        {/*<td>{items.date}</td>*/}
-        <td>{items.orderNo}</td>
-        <td>{items.itemName}</td>
-        <td>{items.qty}</td>
-        <td>{items.price}</td>
-        <td>{items.expectedDate}</td>
-        <td className={'btn-align'}>
-          {items.address}
-        </td>
-        <td className={'btn-align'}>
-          {items.country}
-        </td>
+        <td>{items.date}</td>
+        <td>{items.projectName}</td>
+        <td>{items.designation}</td>
+        <td>{items.mainFeatures}</td>
+        <td>{items.taskType}</td>
+        <td>{items.hours}</td>
         <td className={'btn-align'}>
           <Button color="success" className="btn-pill shadow"
             // onClick={() => this.onTogglePopup(items)}
@@ -90,19 +103,6 @@ class TaskHistory extends Component {
               <CardHeader>
                 <div style={{display: "flex", alignItems: 'center'}}>
                   <Col md="4" xs={8}>
-                    <InputGroup>
-                      <Input type="text" name="searchTxt" placeholder="Search Order Number"/>
-                      <InputGroupAddon addonType="append">
-                        <Button type="button" color="primary" className={"shadow"}
-                                onClick={() => {
-                                }}>Search</Button>
-                      </InputGroupAddon>
-                    </InputGroup>
-
-                  </Col>
-
-
-                  <div style={{position: 'absolute', right: 20}}>
                     <DateRangePickerComponent
                       placeholder={'Select Date Range'}
                       enablePersistence={false}
@@ -110,7 +110,35 @@ class TaskHistory extends Component {
                       width={'100%'}
                       allowEdit={false}
                     />
-                  </div>
+                  </Col>
+                  <Col md="3" xs={8}>
+                    <InputGroup>
+                      <Input type="select" name="selectedCategory">
+                        <option value="" disabled={false}>Select Project</option>
+                        <option value={1} selected={false}>sample</option>
+                      </Input>
+                    </InputGroup>
+                  </Col>
+                  <Col md="4" xs={8}>
+                    <InputGroup>
+                      <Input type="select" name="selectedCategory">
+                        <option value="" disabled={false}>Select Task Type</option>
+                        <option value={1} selected={false}>sample</option>
+                      </Input>
+                    </InputGroup>
+
+                  </Col>
+
+
+                  {/*<div style={{position: 'absolute', right: 20}}>*/}
+                  {/*  <DateRangePickerComponent*/}
+                  {/*    placeholder={'Select Date Range'}*/}
+                  {/*    enablePersistence={false}*/}
+                  {/*    format="dd-MMM-yy"*/}
+                  {/*    width={'100%'}*/}
+                  {/*    allowEdit={false}*/}
+                  {/*  />*/}
+                  {/*</div>*/}
                 </div>
 
               </CardHeader>
@@ -118,14 +146,12 @@ class TaskHistory extends Component {
                 <Table hover bordered striped responsive size="sm" className={"Table"}>
                   <thead>
                   <tr>
-                    {/*<th>Date</th>*/}
-                    <th>Order No</th>
-                    <th>Product Name</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Expected Date</th>
-                    <th>Delivery Address</th>
-                    <th>Country</th>
+                    <th>Date</th>
+                    <th>Project Name</th>
+                    <th>Designation</th>
+                    <th>Main Feature</th>
+                    <th>Task Type</th>
+                    <th>Hours</th>
                     <th>Action</th>
                   </tr>
                   </thead>
@@ -135,6 +161,20 @@ class TaskHistory extends Component {
             </Card>
           </Col>
         </Row>
+
+        <Row>
+          <Col lg={8}/>
+          <Col lg={4}>
+            <Alert color="dark">
+              <Row className="align-items-center justify-content-center">
+                <Label className="font-weight-bold mr-1 font-2xl">Total:</Label>
+                <Label className="font-weight-bold font-2xl text-danger">5.30</Label>
+                <Label className="font-weight-bold font-2xl ml-1">Hours</Label>
+              </Row>
+            </Alert>
+          </Col>
+        </Row>
+
         <Loader
           asLoading={loading}
         />
