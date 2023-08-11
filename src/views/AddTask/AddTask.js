@@ -395,7 +395,7 @@ class AddTask extends Component {
           </Col>
         </Row>
 
-        <Modal isOpen={involveProjectVisible} toggle={()=>this.setState({involveProjectVisible:!this.state.involveProjectVisible})}
+        <Modal size={'sm'} isOpen={involveProjectVisible} toggle={()=>this.setState({involveProjectVisible:!this.state.involveProjectVisible})}
                className={'modal-lg ' + this.props.className}>
           <ModalHeader toggle={this.onTogglePopup}>Involved to new Project</ModalHeader>
           <ModalBody className="pl-5 pr-5">
