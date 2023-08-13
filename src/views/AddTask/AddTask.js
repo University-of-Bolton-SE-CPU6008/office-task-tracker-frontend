@@ -56,14 +56,13 @@ class AddTask extends Component {
     involveProjectVisible: false,
     loading: false,
     asSearch: false,
-    editEnabled: false,
 
     taskId: '',
-    date:new Date(),
+    date: '',
     description: '',
     hours: '',
-    minutes:'',
-    comment:'',
+    minutes: '',
+    comment: '',
 
     taskType: TaskType,
     projects: ProjectsList,
@@ -71,7 +70,7 @@ class AddTask extends Component {
     mainFeatures: [],
     selectedTaskType: '',
     selectedProject: '',
-    selectedDesignation:'',
+    selectedDesignation: '',
     selectedMainFeature: '',
   }
 
@@ -87,17 +86,20 @@ class AddTask extends Component {
     });
   }
 
-  onTogglePopup = () => {
+  onTogglePopup = (item) => {
     this.setState({modelVisible: !this.state.modelVisible})
     this.setState({
-      taskId: '',
       date: '',
-      description: '',
-      unitPrice: '',
-      image: '',
       selectedMainFeature: '',
-      editEnabled: false,
+      description: '',
+      hours: '',
+      minutes: '',
+      selectedTaskType: '',
+      comment:'',
     })
+    if (item){
+      this.setState({selectedProject:item})
+    }
 
   }
 
@@ -105,39 +107,38 @@ class AddTask extends Component {
 
     if (!Validations.textFieldValidator(this.state.date, 1)) {
       CommonFunc.notifyMessage('Please enter date', 0);
-    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
-      CommonFunc.notifyMessage('Please enter product description', 0);
-    } else if (!Validations.numberValidator(this.state.unitPrice)) {
-      CommonFunc.notifyMessage('Please enter valid price', 0);
-    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
-      CommonFunc.notifyMessage('Please enter product description', 0);
-    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
-      CommonFunc.notifyMessage('Please enter product description', 0);
-    } else if (this.state.selectedMainFeature.length === 0) {
-      CommonFunc.notifyMessage('Please select mainFeature', 0);
+    } else if (!Validations.textFieldValidator(this.state.selectedTaskType, 1)) {
+      CommonFunc.notifyMessage('Please select main feature', 0);
+    } else if (!Validations.textFieldValidator(this.state.description,1)) {
+      CommonFunc.notifyMessage('Please enter task description', 0);
+    } else if (!Validations.textFieldValidator(this.state.hours, 1)) {
+      CommonFunc.notifyMessage('Please enter number of hours', 0);
+    } else if (!Validations.textFieldValidator(this.state.selectedTaskType, 1)) {
+      CommonFunc.notifyMessage('Please select task type', 0);
     } else {
       this.setState({loading: true})
       const data = {
         date: this.state.date,
+        mainFeatures: this.state.selectedMainFeature,
         description: this.state.description,
-        imageUrl: this.state.src,
-        price: this.state.unitPrice,
-        mainFeature: this.state.selectedMainFeature
+        numberOfHours: this.state.hours + '.' + this.state.minutes.length > 0 ? this.state.minutes : 0,
+        taskType: this.state.selectedTaskType,
+        comment: this.state.comment
       }
-      await ProductService.saveProduct(data)
-        .then(res => {
-          if (res.success) {
-            this.onTogglePopup()
-            this.getAllProducts()
-          } else {
-            CommonFunc.notifyMessage(res.message);
-            this.setState({loading: false})
-          }
-        })
-        .catch(err => {
-          console.log(err)
-          this.setState({loading: false})
-        })
+      alert(JSON.stringify(data))
+      // await ProductService.saveProduct(data)
+      //   .then(res => {
+      //     if (res.success) {
+      //       this.onTogglePopup()
+      //     } else {
+      //       CommonFunc.notifyMessage(res.message);
+      //       this.setState({loading: false})
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log(err)
+      //     this.setState({loading: false})
+      //   })
     }
 
 
@@ -178,7 +179,7 @@ class AddTask extends Component {
   }
 
   render() {
-    const {totalElements, list, searchTxt, modelVisible, loading, editEnabled, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType,designationTypes,selectedDesignation,hours,minutes,comment} = this.state;
+    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment} = this.state;
 
     const listData = list.map((items, i) => (
       <tr key={i}>
@@ -241,7 +242,8 @@ class AddTask extends Component {
         <Modal size={'sm'} isOpen={involveProjectVisible}
                toggle={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}>Involved to new Project</ModalHeader>
+          <ModalHeader toggle={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}>Involved
+            to new Project</ModalHeader>
           <ModalBody className="pl-5 pr-5">
             <FormGroup row className="pl-5 pr-5">
               <Label>Select the project</Label>
@@ -273,14 +275,14 @@ class AddTask extends Component {
 
         <Modal isOpen={modelVisible} toggle={this.onTogglePopup}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={this.onTogglePopup}>{'Project Name : Project 01'}</ModalHeader>
+          <ModalHeader toggle={this.onTogglePopup}>{`Project Name : ${selectedProject.projectName}`}</ModalHeader>
 
           <ModalBody className="pl-5 pr-5">
             <Form>
               <FormGroup row>
                 <Label sm={3}>Select the date</Label>
                 <Col sm={4}>
-                  <Input type="date" name="selectedMainFeature" onChange={this.onTextChange}/>
+                  <Input type="date" name="date" onChange={this.onTextChange}/>
                 </Col>
               </FormGroup>
               <FormGroup row>
@@ -307,12 +309,12 @@ class AddTask extends Component {
                 <Label sm={3}>Number of hours</Label>
                 <Row className="pl-3">
                   <Col sm={3}>
-                    <Input type="text" name="hours" placeholder="Hours"
+                    <Input type="number" name="hours" placeholder="Hours"
                            value={hours}
                            onChange={this.onTextChange}/>
                   </Col>
                   <Col sm={3} className="pl-0 ml-0">
-                    <Input type="text" name="minutes" placeholder="Minutes"
+                    <Input type="number" name="minutes" placeholder="Minutes"
                            value={minutes}
                            onChange={this.onTextChange}/>
                   </Col>
@@ -335,7 +337,7 @@ class AddTask extends Component {
               <FormGroup row>
                 <Label sm={3}>Comment</Label>
                 <Col sm={9}>
-                  <Input type="textarea" name="comment" placeholder="Comments" value={description}
+                  <Input type="textarea" name="comment" placeholder="Comments" value={comment}
                          onChange={this.onTextChange}/>
                 </Col>
               </FormGroup>
