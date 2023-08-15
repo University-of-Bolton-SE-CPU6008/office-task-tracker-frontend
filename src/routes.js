@@ -11,6 +11,7 @@ const ErrorPage1 =React.lazy(() => import('./views/Pages/Page500/Page500'));
 const TaskHistory = React.lazy(() => import('./views/TaskHistory/TaskHistory'));
 const ForgotPWPage = React.lazy(() => import('./views/Pages/ForgotPW/ForgotPW'));
 const ReportPage = React.lazy(() => import('./views/Report/Report'));
+const AllTasksPage = React.lazy(() => import('./views/Admin/AllTasks/AllTasks'));
 
 
 const routes = [
@@ -23,6 +24,7 @@ const routes = [
   {path: BASE_URL + '/task-history', exact: true, name: 'Task History', component: TaskHistory},
   {path: BASE_URL + '/forgot-password', exact: true, name: 'Forgot Password Page', component: ForgotPWPage},
   {path: BASE_URL + '/Report', exact: true, name: 'Report', component: ReportPage},
+  {path: BASE_URL + '/all-tasks', exact: true, name: 'All Tasks', component: AllTasksPage},
 ];
 
 export default routes;

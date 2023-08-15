@@ -51,9 +51,7 @@ class DefaultHeader extends Component {
           minimized={{src: logo, width: 30, height: 30, alt: 'CoreUI Logo'}}
         />
 
-        {localStorage.getItem(StorageStrings.USER_TYPE)==='ADMIN' && (
-          <AppSidebarToggler className="d-md-down-none" display="lg"/>
-        )}
+        <AppSidebarToggler className="d-md-down-none" display="lg"/>
 
         <Nav className="d-md-down-none" navbar>
         </Nav>

@@ -16,6 +16,7 @@ import {
 } from '@coreui/react';
 // sidebar nav config
 import navigation from '../../_nav';
+import navigation2 from '../../_nav2';
 // routes config
 import routes from '../../routes';
 import {StorageStrings} from "../../constance/StorageStrings";
@@ -27,7 +28,7 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
   state = {
-    name: '',
+    role: '',
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -43,12 +44,12 @@ class DefaultLayout extends Component {
       this.props.history.push(BASE_URL + '/login')
     }
     this.setState({
-      name: localStorage.getItem(StorageStrings.USER_NAME)
+      role: localStorage.getItem(StorageStrings.USER_TYPE)
     })
   }
 
   render() {
-    const {name} = this.state;
+    const {role} = this.state;
     return (
       <div className="app">
 
@@ -66,7 +67,12 @@ class DefaultLayout extends Component {
               <AppSidebarForm/>
               <Suspense>
 
-                <AppSidebarNav navConfig={navigation} {...this.props} />
+                {role !=='admin' ? (
+                  <AppSidebarNav navConfig={navigation} {...this.props} />
+                ):(
+                  <AppSidebarNav navConfig={navigation2} {...this.props} />
+                )}
+
 
               </Suspense>
               <AppSidebarFooter/>

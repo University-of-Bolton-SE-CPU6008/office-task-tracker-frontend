@@ -31,36 +31,36 @@ class Login extends Component {
   }
 
   loginUser=async ()=>{
-    if (!Validations.textFieldValidator(this.state.email, 1)) {
-      CommonFunc.notifyMessage('Please enter valid email address', 0);
-    }else if (!Validations.textFieldValidator(this.state.password, 1)) {
-      CommonFunc.notifyMessage('Please enter password', 0);
-    }else {
-      const obj = {
-        email:this.state.email,
-        password:this.state.password
-      }
-      await authService.loginUser(obj)
-        .then(res=>{
-          console.log('login response::::::::::::::',res)
-          if (res.success){
-            localStorage.setItem(StorageStrings.ACCESS_TOKEN, res.data.access_token);
-            Cookies.set(StorageStrings.ACCESS_TOKEN, res.data.access_token);
-            localStorage.setItem(StorageStrings.REFRESH_TOKEN, res.data.refresh_token);
-            Cookies.set(StorageStrings.REFRESH_TOKEN, res.data.refresh_token);
+    // if (!Validations.textFieldValidator(this.state.email, 1)) {
+    //   CommonFunc.notifyMessage('Please enter valid email address', 0);
+    // }else if (!Validations.textFieldValidator(this.state.password, 1)) {
+    //   CommonFunc.notifyMessage('Please enter password', 0);
+    // }else {
+    //   const obj = {
+    //     email:this.state.email,
+    //     password:this.state.password
+    //   }
+    //   await authService.loginUser(obj)
+    //     .then(res=>{
+    //       console.log('login response::::::::::::::',res)
+    //       if (res.success){
+            localStorage.setItem(StorageStrings.ACCESS_TOKEN, "res.data.access_token");
+            Cookies.set(StorageStrings.ACCESS_TOKEN, "res.data.access_token");
+            localStorage.setItem(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
+            Cookies.set(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
             localStorage.setItem(StorageStrings.LOGGED, 'true');
-            localStorage.setItem(StorageStrings.USER_TYPE,res.data.role);
-            this.props.history.push(BASE_URL + '/add-task');
-          }else {
-            CommonFunc.notifyMessage(res.message,res.status);
-          }
-          this.setState({loading: false})
-        })
-        .catch(err=>{
-          this.setState({loading: false})
-          console.log(err)
-        })
-    }
+            localStorage.setItem(StorageStrings.USER_TYPE,"admin");
+            this.props.history.push(BASE_URL + '/all-tasks');
+    //       }else {
+    //         CommonFunc.notifyMessage(res.message,res.status);
+    //       }
+    //       this.setState({loading: false})
+    //     })
+    //     .catch(err=>{
+    //       this.setState({loading: false})
+    //       console.log(err)
+    //     })
+    // }
 
   }
 
@@ -88,17 +88,17 @@ class Login extends Component {
                 <input value={password} onChange={(e) => {
                   this.onTextChange(e)
                 }} type="password" placeholder="********" id="password" name="password"/>
-                <Link to={BASE_URL + "/forgot-password"}>
-                  <button className="forgot-btn-link">Forgot your password?</button>
-                </Link>
-                <button type="button" className="button-auth mt-2" onClick={async () => {
+                {/*<Link to={BASE_URL + "/forgot-password"}>*/}
+                {/*  <button className="forgot-btn-link">Forgot your password?</button>*/}
+                {/*</Link>*/}
+                <button type="button" className="button-auth mt-5" onClick={async () => {
                   await this.loginUser()
                 }}>Log In
                 </button>
               </form>
-              <Link to={BASE_URL + "/register"}>
-                <button className="link-btn">Don't have an account? Register here.</button>
-              </Link>
+              {/*<Link to={BASE_URL + "/register"}>*/}
+              {/*  <button className="link-btn">Don't have an account? Register here.</button>*/}
+              {/*</Link>*/}
             </Col>
           </Row>
         </Container>
