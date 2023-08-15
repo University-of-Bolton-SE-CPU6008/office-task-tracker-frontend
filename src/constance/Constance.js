@@ -21,6 +21,8 @@ export const ProjectsList = [
   {label:'Edulab', value:1},
   {label:'LECO', value:2},
   {label:'VisitorTag', value:3},
+  {label:'Synapse', value:4},
+  {label:'Fitzky', value:5},
 ]
 
 

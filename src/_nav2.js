@@ -6,15 +6,15 @@ export default {
       url: BASE_URL+'/all-tasks',
       icon: 'icon-puzzle',
     },
-    // {
-    //   name: 'Task History',
-    //   url: BASE_URL+'/task-history',
-    //   icon: 'icon-people',
-    // },
-    // {
-    //   name: 'Report',
-    //   url: BASE_URL+'/report',
-    //   icon: 'icon-people',
-    // }
+    {
+      name: 'Manage Projects',
+      url: BASE_URL+'/manage-projects',
+      icon: 'icon-people',
+    },
+    {
+      name: 'Manage Employee',
+      url: BASE_URL+'/manage-employee',
+      icon: 'icon-people',
+    }
   ],
 };
