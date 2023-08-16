@@ -14,6 +14,7 @@ import {
   ModalHeader, ModalBody, Form, Label, Input, FormGroup, ModalFooter
 } from "reactstrap";
 import {AppSwitch} from "@coreui/react";
+import * as Validations from "../../../validation/Validation";
 
 class Projects extends Component {
   state = {
@@ -40,6 +41,14 @@ class Projects extends Component {
     isEdit:false
   }
 
+  componentDidMount() {
+    this.getAllProjects();
+  }
+
+  getAllProjects=()=>{
+
+  }
+
   onTextChange = (event) => {
     let name = event.target.name;
     this.setState({
@@ -54,12 +63,18 @@ class Projects extends Component {
     }
     if (isEdit){
       this.setState({isEdit})
+    }else {
+      this.setState({isEdit:false})
     }
 
   }
 
-  onSaveProduct = () => {
+  onSave = () => {
+    if (!Validations.textFieldValidator(this.state.projectName, 1)) {
 
+    }else {
+
+    }
   }
 
   render() {
@@ -130,7 +145,7 @@ class Projects extends Component {
           <ModalFooter>
             <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
             <Button color="primary"
-                    onClick={this.onSaveProduct}>{'Submit'}</Button>
+                    onClick={this.onSave}>{!this.state.isEdit?'Submit':'Edit'}</Button>
           </ModalFooter>
         </Modal>
       </div>

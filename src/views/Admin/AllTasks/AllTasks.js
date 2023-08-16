@@ -44,6 +44,14 @@ class AllTasks extends Component {
     selectedProject: {}
   }
 
+  componentDidMount() {
+    this.getAllTasks();
+  }
+
+  getAllTasks=()=>{
+
+  }
+
   onTogglePopup = (item) => {
     this.setState({modelVisible: !this.state.modelVisible})
     if (item) {
