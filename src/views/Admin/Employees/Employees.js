@@ -22,6 +22,7 @@ class Employees extends Component {
       {
         id: 0,
         employeeName: 'Kavinda Dilshan',
+        employeeEmail: 'kavindadilshan97@gmail.com',
         password: '123456',
         involveProjectId: [{id: 1, projectName: 'Synapse'}, {id: 2, projectName: 'APIT'}, {
           id: 3,
@@ -37,12 +38,14 @@ class Employees extends Component {
     password: '',
     rePassword: '',
     employeeName: '',
+    employeeEmail:'',
     status: true,
     selectedData: {},
     selectedDesignation:0,
     selectedInvolveProject:0,
     designationTypes:DesignationTypes,
-    projectList:ProjectsList
+    projectList:ProjectsList,
+    isEdit:false
   }
 
   onTogglePopup = (item, isEdit) => {
@@ -144,6 +147,14 @@ class Employees extends Component {
               </FormGroup>
 
               <FormGroup row>
+                <Label sm={3}>Employee Email</Label>
+                <Col sm={6}>
+                  <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange}
+                         value={this.state.selectedData.employeeEmail}/>
+                </Col>
+              </FormGroup>
+
+              <FormGroup row>
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
                   <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
@@ -184,9 +195,9 @@ class Employees extends Component {
               </FormGroup>
 
               <FormGroup row>
-                <Label sm={3}>Re - Password</Label>
+                <Label sm={3}>Confirm Password</Label>
                 <Col sm={6}>
-                  <Input type="password" name="rePassword" placeHolder={"Password"} onChange={this.onTextChange}
+                  <Input type="password" name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange}
                          value={this.state.selectedData.password}/>
                 </Col>
               </FormGroup>
@@ -195,7 +206,7 @@ class Employees extends Component {
           <ModalFooter>
             <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
             <Button color="primary"
-                    onClick={this.onSave}>{'Submit'}</Button>
+                    onClick={this.onSave}>{!this.state.isEdit?'Submit':'Edit'}</Button>
           </ModalFooter>
         </Modal>
       </div>

@@ -9,7 +9,7 @@ export default {
     {
       name: 'Manage Projects',
       url: BASE_URL+'/manage-projects',
-      icon: 'icon-people',
+      icon: 'icon-layers',
     },
     {
       name: 'Manage Employee',
