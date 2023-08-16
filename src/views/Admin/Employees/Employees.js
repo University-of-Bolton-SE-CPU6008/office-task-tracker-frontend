@@ -15,6 +15,8 @@ import {
 import {AppSwitch} from "@coreui/react";
 import '../../AddTask/AddTask.scss'
 import {DesignationTypes, ProjectsList} from "../../../constance/Constance";
+import * as Validations from "../../../validation/Validation";
+import * as CommonFunc from "../../../utils/CommonFunc";
 
 class Employees extends Component {
   state = {
@@ -28,8 +30,8 @@ class Employees extends Component {
           id: 3,
           projectName: 'TaskLab'
         }, {id: 4, projectName: 'karuna.lk'}],
-        involveProject:{id:1,project:"Edulab"},
-        designation: {id:1,role:"Mobile Developer"},
+        involveProject: {id: 1, project: "Edulab"},
+        designation: {id: 1, role: "Mobile Developer"},
         status: true,
         modelVisible: false,
         isEdit: false
@@ -38,14 +40,22 @@ class Employees extends Component {
     password: '',
     rePassword: '',
     employeeName: '',
-    employeeEmail:'',
+    employeeEmail: '',
     status: true,
     selectedData: {},
-    selectedDesignation:0,
-    selectedInvolveProject:0,
-    designationTypes:DesignationTypes,
-    projectList:ProjectsList,
-    isEdit:false
+    selectedDesignation: 0,
+    selectedInvolveProject: 0,
+    designationTypes: DesignationTypes,
+    projectList: ProjectsList,
+    isEdit: false
+  }
+
+  componentDidMount() {
+    this.getAllEmployees();
+  }
+
+  getAllEmployees = () => {
+
   }
 
   onTogglePopup = (item, isEdit) => {
@@ -54,7 +64,9 @@ class Employees extends Component {
       this.setState({selectedData: item})
     }
     if (isEdit) {
-      this.setState({isEdit,selectedDesignation:item.designation.id,selectedInvolveProject:item.involveProject.id})
+      this.setState({isEdit, selectedDesignation: item.designation.id, selectedInvolveProject: item.involveProject.id})
+    } else {
+      this.setState({isEdit: false})
     }
 
   }
@@ -66,8 +78,24 @@ class Employees extends Component {
     });
   }
 
-  onSave=()=>{
-
+  onSave = () => {
+    if (!Validations.textFieldValidator(this.state.employeeName, 1)) {
+      CommonFunc.notifyMessage('Please enter employee name', 0);
+    } else if (!Validations.emailValidator(this.state.employeeEmail)) {
+      CommonFunc.notifyMessage('Please enter valid employee email', 0);
+    } else if (this.state.selectedInvolveProject === 0) {
+      CommonFunc.notifyMessage('Please select project', 0);
+    } else if (this.state.selectedDesignation === 0) {
+      CommonFunc.notifyMessage('Please select designation', 0);
+    } else if (!Validations.textFieldValidator(this.state.password, 1)) {
+      CommonFunc.notifyMessage('Please enter password', 0);
+    } else if (!Validations.textFieldValidator(this.state.rePassword, 1)) {
+      CommonFunc.notifyMessage('Please enter confirm password', 0);
+    } else if (this.state.rePassword !== this.state.password) {
+      CommonFunc.notifyMessage('password not match', 0);
+    } else {
+      alert('ok')
+    }
   }
 
   render() {
@@ -168,23 +196,25 @@ class Employees extends Component {
                   <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange}>
                     <option value="" disabled={this.state.selectedInvolveProject !== 0}>Select Project</option>
                     {this.state.projectList.map(item => (
-                      <option value={item.value} selected={item.value === this.state.selectedInvolveProject}>{item.label}</option>
+                      <option value={item.value}
+                              selected={item.value === this.state.selectedInvolveProject}>{item.label}</option>
                     ))}
                   </Input>
                 </Col>
               </FormGroup>
 
-                <FormGroup row>
-                  <Label sm={3}>Designation type</Label>
-                  <Col sm={5}>
-                    <Input type="select" name="selectedDesignation" onChange={this.onTextChange}>
-                      <option value="" disabled={this.state.selectedDesignation !== 0}>Select Designation</option>
-                      {this.state.designationTypes.map(item => (
-                        <option value={item.value} selected={item.value === this.state.selectedDesignation}>{item.label}</option>
-                      ))}
-                    </Input>
-                  </Col>
-                </FormGroup>
+              <FormGroup row>
+                <Label sm={3}>Designation type</Label>
+                <Col sm={5}>
+                  <Input type="select" name="selectedDesignation" onChange={this.onTextChange}>
+                    <option value="" disabled={this.state.selectedDesignation !== 0}>Select Designation</option>
+                    {this.state.designationTypes.map(item => (
+                      <option value={item.value}
+                              selected={item.value === this.state.selectedDesignation}>{item.label}</option>
+                    ))}
+                  </Input>
+                </Col>
+              </FormGroup>
 
               <FormGroup row>
                 <Label sm={3}>Password</Label>
@@ -206,7 +236,7 @@ class Employees extends Component {
           <ModalFooter>
             <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
             <Button color="primary"
-                    onClick={this.onSave}>{!this.state.isEdit?'Submit':'Edit'}</Button>
+                    onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
           </ModalFooter>
         </Modal>
       </div>
