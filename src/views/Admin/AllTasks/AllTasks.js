@@ -13,6 +13,9 @@ import {
   Table
 } from "reactstrap";
 import '../../AddTask/AddTask.scss'
+import * as TasksService from '../../../services/tasks';
+import * as CommonFunc from "../../../utils/CommonFunc";
+import Loader from "../../../components/Loader/loading";
 
 class AllTasks extends Component {
   state = {
@@ -41,15 +44,26 @@ class AllTasks extends Component {
       }
     ],
     modelVisible: false,
-    selectedProject: {}
+    selectedProject: {},
+    loading:false
   }
 
   componentDidMount() {
-    this.getAllTasks();
+    // this.getAllTasks();
   }
 
-  getAllTasks=()=>{
-
+  getAllTasks = () => {
+    this.setState({loading: true})
+    const data = {"all": 1}
+    TasksService.getAllTasks(data)
+      .then(res=>{
+        if (res.success){
+          this.setState({loading: false})
+        }else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
+        }
+      })
   }
 
   onTogglePopup = (item) => {
@@ -177,9 +191,12 @@ class AllTasks extends Component {
             <Button color="danger" onClick={this.onTogglePopup}>Close</Button>
           </ModalFooter>
         </Modal>
+        <Loader
+          asLoading={this.state.loading}
+        />
       </div>
-  );
+    );
   }
-  }
+}
 
-  export default AllTasks;
+export default AllTasks;

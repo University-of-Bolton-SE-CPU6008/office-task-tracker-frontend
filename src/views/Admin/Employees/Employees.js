@@ -17,6 +17,8 @@ import '../../AddTask/AddTask.scss'
 import {DesignationTypes, ProjectsList} from "../../../constance/Constance";
 import * as Validations from "../../../validation/Validation";
 import * as CommonFunc from "../../../utils/CommonFunc";
+import * as EmployeeService from "../../../services/employee";
+import Loader from "../../../components/Loader/loading";
 
 class Employees extends Component {
   state = {
@@ -47,15 +49,26 @@ class Employees extends Component {
     selectedInvolveProject: 0,
     designationTypes: DesignationTypes,
     projectList: ProjectsList,
-    isEdit: false
+    isEdit: false,
+    loading:false
   }
 
   componentDidMount() {
-    this.getAllEmployees();
+    // this.getAllEmployees();
   }
 
   getAllEmployees = () => {
-
+    this.setState({loading: true})
+    const data = {"all": 1}
+    EmployeeService.getAllEmployee()
+      .then(res => {
+        if (res.success) {
+          this.setState({loading: false})
+        } else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
+        }
+      })
   }
 
   onTogglePopup = (item, isEdit) => {
@@ -239,6 +252,9 @@ class Employees extends Component {
                     onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
           </ModalFooter>
         </Modal>
+        <Loader
+          asLoading={this.state.loading}
+        />
       </div>
     );
   }

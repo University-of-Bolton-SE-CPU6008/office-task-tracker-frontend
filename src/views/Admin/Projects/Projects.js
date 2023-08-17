@@ -15,6 +15,9 @@ import {
 } from "reactstrap";
 import {AppSwitch} from "@coreui/react";
 import * as Validations from "../../../validation/Validation";
+import * as ProjectService from "../../../services/projects";
+import * as CommonFunc from "../../../utils/CommonFunc";
+import Loader from "../../../components/Loader/loading";
 
 class Projects extends Component {
   state = {
@@ -38,15 +41,26 @@ class Projects extends Component {
     selectedData: {},
     projectName: '',
     modelVisible: false,
-    isEdit:false
+    isEdit: false,
+    loading:false
   }
 
   componentDidMount() {
-    this.getAllProjects();
+    // this.getAllProjects();
   }
 
-  getAllProjects=()=>{
-
+  getAllProjects = () => {
+    this.setState({loading: true})
+    const data = {"all": 1}
+    ProjectService.getAllProjects(data)
+      .then(res => {
+        if (res.success) {
+          this.setState({loading: false})
+        } else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
+        }
+      })
   }
 
   onTextChange = (event) => {
@@ -56,15 +70,15 @@ class Projects extends Component {
     });
   }
 
-  onTogglePopup = (item,isEdit) => {
+  onTogglePopup = (item, isEdit) => {
     this.setState({modelVisible: !this.state.modelVisible, projectName: ''})
     if (item) {
       this.setState({selectedData: item})
     }
-    if (isEdit){
+    if (isEdit) {
       this.setState({isEdit})
-    }else {
-      this.setState({isEdit:false})
+    } else {
+      this.setState({isEdit: false})
     }
 
   }
@@ -72,7 +86,7 @@ class Projects extends Component {
   onSave = () => {
     if (!Validations.textFieldValidator(this.state.projectName, 1)) {
 
-    }else {
+    } else {
 
     }
   }
@@ -85,7 +99,8 @@ class Projects extends Component {
           <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status}/>
         </td>
         <td className={'btn-align'}>
-          <Button color="primary" className="btn-pill shadow" onClick={() => this.onTogglePopup(items,true)}>Edit</Button>
+          <Button color="primary" className="btn-pill shadow"
+                  onClick={() => this.onTogglePopup(items, true)}>Edit</Button>
         </td>
       </tr>
     ));
@@ -125,19 +140,22 @@ class Projects extends Component {
         </Row>
         <Modal isOpen={this.state.modelVisible} toggle={this.onTogglePopup}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={this.onTogglePopup}>{this.state.isEdit? 'Edit Project' : 'Create new project'}</ModalHeader>
+          <ModalHeader
+            toggle={this.onTogglePopup}>{this.state.isEdit ? 'Edit Project' : 'Create new project'}</ModalHeader>
           <ModalBody className="pl-5 pr-5">
             <Form>
               <FormGroup row>
                 <Label sm={3}>Project Name</Label>
                 <Col sm={6}>
-                  <Input type="text" name="projectName" placeHolder={"Project Name"} onChange={this.onTextChange} value={this.state.selectedData.projectName}/>
+                  <Input type="text" name="projectName" placeHolder={"Project Name"} onChange={this.onTextChange}
+                         value={this.state.selectedData.projectName}/>
                 </Col>
               </FormGroup>
               <FormGroup row className="mt-4">
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
-                  <AppSwitch variant={'pill'} label color={'success'} size={'lg'}  checked={this.state.selectedData.status}/>
+                  <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
+                             checked={this.state.selectedData.status}/>
                 </Col>
               </FormGroup>
             </Form>
@@ -145,9 +163,12 @@ class Projects extends Component {
           <ModalFooter>
             <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
             <Button color="primary"
-                    onClick={this.onSave}>{!this.state.isEdit?'Submit':'Edit'}</Button>
+                    onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
           </ModalFooter>
         </Modal>
+        <Loader
+          asLoading={this.state.loading}
+        />
       </div>
     );
   }
