@@ -1,11 +1,36 @@
 import React, {Component} from 'react';
 import {Card, Col, Row} from "reactstrap";
 import CanvasJSReact from "../../components/Chart/canvasjs.react";
+import * as TasksService from '../../services/tasks'
+import * as CommonFunc from "../../utils/CommonFunc";
+import Loader from "../../components/Loader/loading";
 
 // var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class Report extends Component {
+
+  state = {
+    loading: false
+  }
+
+  componentDidMount() {
+
+  }
+
+  getTaskReports = () => {
+    this.setState({loading: true})
+    TasksService.getTaskReport()
+      .then(res => {
+        if (res.success) {
+          this.setState({loading: false})
+        } else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
+        }
+      })
+  }
+
   render() {
     const options = {
       title: {
@@ -24,11 +49,11 @@ class Report extends Component {
           ]
         }
       ],
-      axisY:{
-        title:"Working Hours",
+      axisY: {
+        title: "Working Hours",
       },
-      axisX:{
-        title:"Date",
+      axisX: {
+        title: "Date",
       },
     }
     return (
@@ -40,6 +65,11 @@ class Report extends Component {
             </Card>
           </Col>
         </Row>
+        {this.state.loading && (
+          <Loader
+            asLoading={this.state.loading}
+          />
+        )}
       </div>
     );
   }

@@ -191,9 +191,13 @@ class AllTasks extends Component {
             <Button color="danger" onClick={this.onTogglePopup}>Close</Button>
           </ModalFooter>
         </Modal>
-        <Loader
-          asLoading={this.state.loading}
-        />
+
+        {this.state.loading && (
+          <Loader
+            asLoading={this.state.loading}
+          />
+        )}
+
       </div>
     );
   }

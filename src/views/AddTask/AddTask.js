@@ -75,7 +75,21 @@ class AddTask extends Component {
   }
 
   async componentDidMount() {
+    // this.getAllTasks()
+  }
 
+  getAllTasks = () => {
+    this.setState({loading: true})
+    const data = {"all": 1}
+    TasksService.getAllTasks(data)
+      .then(res=>{
+        if (res.success){
+          this.setState({loading: false})
+        }else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
+        }
+      })
   }
 
 

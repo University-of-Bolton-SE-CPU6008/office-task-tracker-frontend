@@ -60,10 +60,11 @@ class TaskHistory extends Component {
   }
 
   async componentDidMount() {
-    // await this.getAllProductRequest()
+    // await this.getAllTasks()
   }
 
-  getAllProductRequest = async () => {
+  getAllTasks = async () => {
+    this.setState({loading: true})
     await TasksService.getAllTasks()
       .then(res => {
         const list = [];
@@ -288,9 +289,11 @@ class TaskHistory extends Component {
           </ModalFooter>
         </Modal>
 
-        <Loader
-          asLoading={loading}
-        />
+        {this.state.loading && (
+          <Loader
+            asLoading={this.state.loading}
+          />
+        )}
       </div>
     );
   }

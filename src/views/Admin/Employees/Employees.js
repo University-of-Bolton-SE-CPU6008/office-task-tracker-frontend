@@ -252,9 +252,11 @@ class Employees extends Component {
                     onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
           </ModalFooter>
         </Modal>
-        <Loader
-          asLoading={this.state.loading}
-        />
+        {this.state.loading && (
+          <Loader
+            asLoading={this.state.loading}
+          />
+        )}
       </div>
     );
   }

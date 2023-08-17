@@ -36,7 +36,7 @@ export async function getTaskReport() {
   return await ApiService.callApi(apiObject);
 }
 
-export async function getTaskByEmployee(id) {
+export async function getTaskByTaskId(id) {
   const apiObject = {};
   apiObject.method = 'GET';
   apiObject.authentication = true;
