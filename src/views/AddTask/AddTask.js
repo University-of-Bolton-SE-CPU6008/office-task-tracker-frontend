@@ -24,7 +24,7 @@ import {
 import {Link} from "react-router-dom";
 import {BASE_URL, DesignationTypes, ProjectsList, TaskType} from "../../constance/Constance";
 import './AddTask.scss';
-import * as ProductService from '../../services/product';
+import * as TasksService from '../../services/tasks';
 import * as CommonFunc from '../../utils/CommonFunc';
 import Loader from "../../components/Loader/loading";
 import {StorageStrings} from "../../constance/StorageStrings";
@@ -126,7 +126,7 @@ class AddTask extends Component {
         comment: this.state.comment
       }
       alert(JSON.stringify(data))
-      // await ProductService.saveProduct(data)
+      // await TasksService.saveProduct(data)
       //   .then(res => {
       //     if (res.success) {
       //       this.onTogglePopup()
@@ -144,39 +144,39 @@ class AddTask extends Component {
 
   }
 
-  async deleteHandler(id) {
-    swal({
-      title: "Are you sure?",
-      text: "Are you sure you want to delete this product?",
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-      className: "swal-footer"
-    })
-      .then((willDelete) => {
-        if (willDelete) {
-          this.onDeleteProduct(id)
-        }
-      });
-  }
+  // async deleteHandler(id) {
+  //   swal({
+  //     title: "Are you sure?",
+  //     text: "Are you sure you want to delete this product?",
+  //     icon: "warning",
+  //     buttons: true,
+  //     dangerMode: true,
+  //     className: "swal-footer"
+  //   })
+  //     .then((willDelete) => {
+  //       if (willDelete) {
+  //         this.onDeleteProduct(id)
+  //       }
+  //     });
+  // }
 
-  onDeleteProduct = async (id) => {
-    this.setState({loading: true})
-    await ProductService.deleteProduct(id)
-      .then(res => {
-        if (res.success) {
-          CommonFunc.notifyMessage('Product has been deleted!', 1);
-          this.getAllProducts()
-        } else {
-          CommonFunc.notifyMessage(res.message, 0);
-          this.setState({loading: false})
-        }
-      })
-      .catch(err => {
-        console.log(err)
-        this.setState({loading: false})
-      })
-  }
+  // onDeleteProduct = async (id) => {
+  //   this.setState({loading: true})
+  //   await TasksService.deleteProduct(id)
+  //     .then(res => {
+  //       if (res.success) {
+  //         CommonFunc.notifyMessage('Product has been deleted!', 1);
+  //         this.getAllProducts()
+  //       } else {
+  //         CommonFunc.notifyMessage(res.message, 0);
+  //         this.setState({loading: false})
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //       this.setState({loading: false})
+  //     })
+  // }
 
   render() {
     const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment} = this.state;
@@ -188,8 +188,8 @@ class AddTask extends Component {
         <td className={'btn-align'}>
           <Button color="dark" className="btn-pill shadow" onClick={() => this.onTogglePopup(items, true)}>Add
             Task</Button>
-          <Button color="danger" className="btn-pill shadow"
-                  onClick={() => this.deleteHandler(items.taskId)}>Edit</Button>
+          {/*<Button color="danger" className="btn-pill shadow"*/}
+          {/*        onClick={() => this.deleteHandler(items.taskId)}>Edit</Button>*/}
         </td>
       </tr>
     ));

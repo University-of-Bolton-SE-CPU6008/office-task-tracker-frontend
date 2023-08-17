@@ -13,7 +13,7 @@ import {
   Table, Label, Alert, ModalBody, Form, FormGroup
 } from "reactstrap";
 import './TaskHistory.scss';
-import * as ProductService from '../../services/product';
+import * as TasksService from '../../services/tasks';
 import * as CommonFunc from "../../utils/CommonFunc";
 import Loader from "../../components/Loader/loading";
 import {DateRangePickerComponent} from '@syncfusion/ej2-react-calendars';
@@ -64,7 +64,7 @@ class TaskHistory extends Component {
   }
 
   getAllProductRequest = async () => {
-    await ProductService.getAllProductRequest()
+    await TasksService.getAllTasks()
       .then(res => {
         const list = [];
         if (res.success) {
