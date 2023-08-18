@@ -15,9 +15,9 @@ import {
 } from "reactstrap";
 import {AppSwitch} from "@coreui/react";
 import * as Validations from "../../../validation/Validation";
-import * as ProjectService from "../../../services/projects";
 import * as CommonFunc from "../../../utils/CommonFunc";
 import Loader from "../../../components/Loader/loading";
+import * as ProjectService from "../../../services/projects";
 
 class Projects extends Component {
   state = {
@@ -42,7 +42,8 @@ class Projects extends Component {
     projectName: '',
     modelVisible: false,
     isEdit: false,
-    loading:false
+    loading:false,
+    status:false
   }
 
   componentDidMount() {
@@ -55,6 +56,12 @@ class Projects extends Component {
     ProjectService.getAllProjects(data)
       .then(res => {
         if (res.success) {
+          const list = [];
+          res.data.project_list.map((item)=>({
+            id:item.id,
+            projectName:item.name,
+            status:item.status === 1
+          }))
           this.setState({loading: false})
         } else {
           CommonFunc.notifyMessage(res.message);
@@ -85,9 +92,23 @@ class Projects extends Component {
 
   onSave = () => {
     if (!Validations.textFieldValidator(this.state.projectName, 1)) {
-
+      CommonFunc.notifyMessage("Please enter project name",0);
     } else {
-
+      this.setState({loading: true})
+      const data = {
+        name: this.state.projectName,
+        status: this.state.status
+      }
+      ProjectService.createProjects(data)
+        .then(res=>{
+          if (res.success){
+            CommonFunc.notifyMessage("Record Added",1);
+            this.setState({loading: false})
+          }else {
+            CommonFunc.notifyMessage(res.message);
+            this.setState({loading: false})
+          }
+        })
     }
   }
 
@@ -96,7 +117,7 @@ class Projects extends Component {
       <tr key={i}>
         <td className={"DescriptionTD"}>{items.projectName}</td>
         <td className={"DescriptionTD"}>
-          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status}/>
+          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status} disabled={true}/>
         </td>
         <td className={'btn-align'}>
           <Button color="primary" className="btn-pill shadow"
@@ -155,7 +176,7 @@ class Projects extends Component {
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
                   <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
-                             checked={this.state.selectedData.status}/>
+                             checked={this.state.selectedData.status} onChange={(item) => this.setState({status:item})}/>
                 </Col>
               </FormGroup>
             </Form>
