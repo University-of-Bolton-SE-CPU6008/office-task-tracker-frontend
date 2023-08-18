@@ -31,7 +31,7 @@ class Login extends Component {
   }
 
   loginUser=async ()=>{
-    if (!Validations.textFieldValidator(this.state.email, 1)) {
+    if (!Validations.emailValidator(this.state.email)) {
       CommonFunc.notifyMessage('Please enter valid email address', 0);
     }else if (!Validations.textFieldValidator(this.state.password, 1)) {
       CommonFunc.notifyMessage('Please enter password', 0);
@@ -46,11 +46,14 @@ class Login extends Component {
           if (res.success){
             localStorage.setItem(StorageStrings.ACCESS_TOKEN, res.data.accessToken);
             Cookies.set(StorageStrings.ACCESS_TOKEN, res.data.accessToken);
-            // localStorage.setItem(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
-            // Cookies.set(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
             localStorage.setItem(StorageStrings.LOGGED, 'true');
-            localStorage.setItem(StorageStrings.USER_TYPE,"admin");
-            // this.props.history.push(BASE_URL + '/all-tasks');
+            localStorage.setItem(StorageStrings.USER_TYPE,res.data.user.user_level);
+            if (res.data.user.user_level!=='admin'){
+              this.props.history.push(BASE_URL + '/add-task');
+            }else {
+              this.props.history.push(BASE_URL + '/all-tasks');
+            }
+
           }else {
             CommonFunc.notifyMessage(res.message,res.status);
           }
