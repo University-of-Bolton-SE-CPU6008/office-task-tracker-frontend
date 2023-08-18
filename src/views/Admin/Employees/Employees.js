@@ -36,7 +36,8 @@ class Employees extends Component {
     projectList: [],
     isEdit: false,
     loading: false,
-    modelVisible: false
+    modelVisible: false,
+    readOnly: false
   }
 
   componentDidMount() {
@@ -107,15 +108,15 @@ class Employees extends Component {
 
   onTogglePopup = (item, isEdit) => {
     this.setState({modelVisible: !this.state.modelVisible})
-      this.setState({
-        password: item.password,
-        rePassword: item.password,
-        employeeName: item.employeeName,
-        employeeEmail: item.employeeEmail,
-        status: item.status,
-        selectedDesignation: item.designation.id,
-        selectedInvolveProject: item.involveProject.id,
-      })
+    this.setState({
+      password: item.password,
+      rePassword: item.password,
+      employeeName: item.employeeName,
+      employeeEmail: item.employeeEmail,
+      status: item.status,
+      selectedDesignation: item.designation.id,
+      selectedInvolveProject: item.involveProject.id,
+    })
     if (isEdit) {
       this.setState({isEdit})
     }
@@ -132,7 +133,8 @@ class Employees extends Component {
       status: false,
       selectedDesignation: 0,
       selectedInvolveProject: 0,
-      isEdit:false
+      isEdit: false,
+      readOnly:false
     })
   }
 
@@ -205,6 +207,10 @@ class Employees extends Component {
           <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status} disabled/>
         </td>
         <td className={'btn-align'}>
+          <Button color="dark" className="btn-pill shadow" onClick={() => {
+            this.setState({readOnly: true})
+            this.onTogglePopup(items, false)
+          }}>View</Button>
           <Button color="primary" className="btn-pill shadow"
                   onClick={() => this.onTogglePopup(items, true)}>Edit</Button>
         </td>
@@ -251,13 +257,13 @@ class Employees extends Component {
         <Modal isOpen={this.state.modelVisible} toggle={this.onPopupVisibility}
                className={'modal-lg ' + this.props.className}>
           <ModalHeader
-            toggle={this.onPopupVisibility}>{this.state.isEdit ? 'Edit employee' : 'Create new employee'}</ModalHeader>
+            toggle={this.onPopupVisibility}>{this.state.isEdit ? 'Edit employee' : this.state.readOnly ? 'View Employee' : 'Create new employee'}</ModalHeader>
           <ModalBody className="pl-5 pr-5">
             <Form>
               <FormGroup row>
                 <Label sm={3}>Employee Name</Label>
                 <Col sm={6}>
-                  <Input type="text" name="employeeName" placeHolder={"Employee Name"} onChange={this.onTextChange}
+                  <Input type="text" name="employeeName" placeHolder={"Employee Name"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.employeeName}/>
                 </Col>
               </FormGroup>
@@ -265,7 +271,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Employee Email</Label>
                 <Col sm={6}>
-                  <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange}
+                  <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.employeeEmail}/>
                 </Col>
               </FormGroup>
@@ -278,6 +284,7 @@ class Employees extends Component {
                              onChange={() => {
                                this.setState({status: !this.state.status})
                              }}
+                             disabled={this.state.readOnly}
                   />
                 </Col>
               </FormGroup>
@@ -285,7 +292,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Involve Project</Label>
                 <Col sm={5}>
-                  <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange}>
+                  <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange} disabled={this.state.readOnly}>
                     <option value="" disabled={this.state.selectedInvolveProject !== 0}>Select Project</option>
                     {this.state.projectList.map(item => (
                       <option value={item.value}
@@ -298,7 +305,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Designation type</Label>
                 <Col sm={5}>
-                  <Input type="select" name="selectedDesignation" onChange={this.onTextChange}>
+                  <Input type="select" name="selectedDesignation" onChange={this.onTextChange} disabled={this.state.readOnly}>
                     <option value="" disabled={this.state.selectedDesignation !== 0}>Select Designation</option>
                     {this.state.designationTypes.map(item => (
                       <option value={item.value}
@@ -311,7 +318,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Password</Label>
                 <Col sm={6}>
-                  <Input type="password" name="password" placeHolder={"Password"} onChange={this.onTextChange}
+                  <Input type="password" name="password" placeHolder={"Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.password}/>
                 </Col>
               </FormGroup>
@@ -319,7 +326,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Confirm Password</Label>
                 <Col sm={6}>
-                  <Input type="password" name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange}
+                  <Input type="password" name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.rePassword}/>
                 </Col>
               </FormGroup>
