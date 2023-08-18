@@ -19,7 +19,7 @@ export async function loginUser(userCredentials){
   apiObject.authentication = false;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = 'auth/login';
+  apiObject.endpoint = 'login';
   apiObject.body = userCredentials;
   apiObject.state = "login";
 

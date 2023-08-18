@@ -82,12 +82,27 @@ class AddTask extends Component {
     this.setState({loading: true})
     const data = {"all": 1}
     TasksService.getAllTasks(data)
-      .then(res=>{
-        if (res.success){
+      .then(res => {
+        if (res.success) {
           this.setState({loading: false})
-        }else {
+        } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
+        }
+      })
+  }
+
+  getAllTaskTypes = () => {
+    const data = {"all": 1}
+    TasksService.getAllTasksType(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.map(item => ({
+            label:item.type_name,
+            value:item.id
+          }))
+          this.setState({taskType:list})
         }
       })
   }
@@ -109,10 +124,10 @@ class AddTask extends Component {
       hours: '',
       minutes: '',
       selectedTaskType: '',
-      comment:'',
+      comment: '',
     })
-    if (item){
-      this.setState({selectedProject:item})
+    if (item) {
+      this.setState({selectedProject: item})
     }
 
   }
@@ -123,7 +138,7 @@ class AddTask extends Component {
       CommonFunc.notifyMessage('Please enter date', 0);
     } else if (!Validations.textFieldValidator(this.state.selectedTaskType, 1)) {
       CommonFunc.notifyMessage('Please select main feature', 0);
-    } else if (!Validations.textFieldValidator(this.state.description,1)) {
+    } else if (!Validations.textFieldValidator(this.state.description, 1)) {
       CommonFunc.notifyMessage('Please enter task description', 0);
     } else if (!Validations.textFieldValidator(this.state.hours, 1)) {
       CommonFunc.notifyMessage('Please enter number of hours', 0);

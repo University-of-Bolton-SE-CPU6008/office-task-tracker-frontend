@@ -45,7 +45,7 @@ class AllTasks extends Component {
     ],
     modelVisible: false,
     selectedProject: {},
-    loading:false
+    loading: false
   }
 
   componentDidMount() {
@@ -56,10 +56,25 @@ class AllTasks extends Component {
     this.setState({loading: true})
     const data = {"all": 1}
     TasksService.getAllTasks(data)
-      .then(res=>{
-        if (res.success){
-          this.setState({loading: false})
-        }else {
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.task_list.map(item => {
+            list.push({
+              id: item.id,
+              date: item.date,
+              username: 'dilshan',
+              projectName: item.project.name,
+              numOfHours: item.number_of_hour,
+              taskType: item.task_type.task_name,
+              description: 'asd',
+              comment: item.comment,
+              designation: 'UI Developer'
+            })
+          })
+
+          this.setState({loading: false, list})
+        } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
         }

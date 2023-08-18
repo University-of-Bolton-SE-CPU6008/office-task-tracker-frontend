@@ -91,6 +91,21 @@ class TaskHistory extends Component {
       })
   }
 
+  getAllTaskTypes = () => {
+    const data = {"all": 1}
+    TasksService.getAllTasksType(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.map(item => ({
+            label:item.type_name,
+            value:item.id
+          }))
+          this.setState({taskType:list})
+        }
+      })
+  }
+
   onTogglePopup = (item) => {
     this.setState({modelVisible: !this.state.modelVisible})
     this.setState({

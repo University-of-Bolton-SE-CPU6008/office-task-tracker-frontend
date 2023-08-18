@@ -34,7 +34,8 @@ export const callApi = async (apiObject) => {
   }
 
 
-  const url = `${apiConfig.serverUrl}/${apiConfig.basePath}/${apiObject.endpoint}`;
+  const url = `${apiConfig.serverUrl}/${apiObject.state === 'login' ? 'api' : apiConfig.basePath}/${apiObject.endpoint}`;
+
   let result;
 
   await axios[method](url, method !== 'get' && method !== 'delete' ? body : {headers:headers,data:null}, {headers:headers})

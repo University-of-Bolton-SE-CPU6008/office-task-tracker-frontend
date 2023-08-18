@@ -31,36 +31,36 @@ class Login extends Component {
   }
 
   loginUser=async ()=>{
-    // if (!Validations.textFieldValidator(this.state.email, 1)) {
-    //   CommonFunc.notifyMessage('Please enter valid email address', 0);
-    // }else if (!Validations.textFieldValidator(this.state.password, 1)) {
-    //   CommonFunc.notifyMessage('Please enter password', 0);
-    // }else {
-    //   const obj = {
-    //     email:this.state.email,
-    //     password:this.state.password
-    //   }
-    //   await authService.loginUser(obj)
-    //     .then(res=>{
-    //       console.log('login response::::::::::::::',res)
-    //       if (res.success){
-            localStorage.setItem(StorageStrings.ACCESS_TOKEN, "res.data.access_token");
-            Cookies.set(StorageStrings.ACCESS_TOKEN, "res.data.access_token");
-            localStorage.setItem(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
-            Cookies.set(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
+    if (!Validations.textFieldValidator(this.state.email, 1)) {
+      CommonFunc.notifyMessage('Please enter valid email address', 0);
+    }else if (!Validations.textFieldValidator(this.state.password, 1)) {
+      CommonFunc.notifyMessage('Please enter password', 0);
+    }else {
+      const obj = {
+        email:this.state.email,
+        password:this.state.password
+      }
+      await authService.loginUser(obj)
+        .then(res=>{
+          console.log('login response::::::::::::::',res)
+          if (res.success){
+            localStorage.setItem(StorageStrings.ACCESS_TOKEN, res.data.accessToken);
+            Cookies.set(StorageStrings.ACCESS_TOKEN, res.data.accessToken);
+            // localStorage.setItem(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
+            // Cookies.set(StorageStrings.REFRESH_TOKEN, "res.data.refresh_token");
             localStorage.setItem(StorageStrings.LOGGED, 'true');
             localStorage.setItem(StorageStrings.USER_TYPE,"admin");
-            this.props.history.push(BASE_URL + '/all-tasks');
-    //       }else {
-    //         CommonFunc.notifyMessage(res.message,res.status);
-    //       }
-    //       this.setState({loading: false})
-    //     })
-    //     .catch(err=>{
-    //       this.setState({loading: false})
-    //       console.log(err)
-    //     })
-    // }
+            // this.props.history.push(BASE_URL + '/all-tasks');
+          }else {
+            CommonFunc.notifyMessage(res.message,res.status);
+          }
+          this.setState({loading: false})
+        })
+        .catch(err=>{
+          this.setState({loading: false})
+          console.log(err)
+        })
+    }
 
   }
 

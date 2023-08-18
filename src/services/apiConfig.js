@@ -1,6 +1,6 @@
 
 const conf = {
-  serverUrl: 'http://18.141.12.54',
+  serverUrl: 'http://18.136.200.74',
   basePath: `api/v1`,
   redirect: ``
 };
