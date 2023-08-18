@@ -19,37 +19,14 @@ import Loader from "../../../components/Loader/loading";
 
 class AllTasks extends Component {
   state = {
-    list: [
-      {
-        id: 1,
-        date: '25/06/2023',
-        username: 'kavinda',
-        projectName: 'Synapse',
-        numOfHours: '10.25',
-        taskType: 'Bug Fixes',
-        description: 'asd',
-        comment: 'test',
-        designation: 'Mobile Developer'
-      },
-      {
-        id: 2,
-        date: '30/06/2023',
-        username: 'dilshan',
-        projectName: 'Fitzky',
-        numOfHours: '6.15',
-        taskType: 'Developments',
-        description: 'asd',
-        comment: 'test',
-        designation: 'UI Developer'
-      }
-    ],
+    list: [],
     modelVisible: false,
     selectedProject: {},
     loading: false
   }
 
   componentDidMount() {
-    // this.getAllTasks();
+    this.getAllTasks();
   }
 
   getAllTasks = () => {
@@ -57,17 +34,18 @@ class AllTasks extends Component {
     const data = {"all": 1}
     TasksService.getAllTasks(data)
       .then(res => {
+        console.log(res)
         if (res.success) {
           const list = [];
-          res.data.task_list.map(item => {
+          res.data.task_list && res.data.task_list.map(item => {
             list.push({
               id: item.id,
               date: item.date,
               username: 'dilshan',
               projectName: item.project.name,
-              numOfHours: item.number_of_hour,
-              taskType: item.task_type.task_name,
-              description: 'asd',
+              numOfHours: Math.floor(item.number_of_hour)!==Number(item.number_of_hour)?item.number_of_hour:Number(item.number_of_hour).toFixed(2),
+              taskType: item.task_type.type_name,
+              description: item.task_detail,
               comment: item.comment,
               designation: 'UI Developer'
             })
