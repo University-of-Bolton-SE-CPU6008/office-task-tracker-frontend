@@ -18,7 +18,7 @@ export async function createTask(body) {
   apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `product/create`;
+  apiObject.endpoint = `task/create`;
   apiObject.multipart = false;
   apiObject.body = body;
   return await ApiService.callApi(apiObject);

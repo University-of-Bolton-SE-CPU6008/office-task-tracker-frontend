@@ -48,6 +48,7 @@ class Login extends Component {
             Cookies.set(StorageStrings.ACCESS_TOKEN, res.data.accessToken);
             localStorage.setItem(StorageStrings.LOGGED, 'true');
             localStorage.setItem(StorageStrings.USER_TYPE,res.data.user.user_level);
+            localStorage.setItem(StorageStrings.USERID,res.data.user.id);
             if (res.data.user.user_level!=='admin'){
               this.props.history.push(BASE_URL + '/add-task');
             }else {

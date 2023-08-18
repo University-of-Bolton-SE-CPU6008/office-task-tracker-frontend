@@ -36,18 +36,7 @@ import * as Validations from "../../validation/Validation";
 
 class AddTask extends Component {
   state = {
-    list: [
-      {
-        projectId: 1,
-        projectName: 'Project 01',
-        designation: 'Frontend Developer'
-      },
-      {
-        projectId: 2,
-        projectName: 'Project 02',
-        designation: 'Backend Developer'
-      }
-    ],
+    list: [],
     selectedPage: 1,
     totalElements: 0,
     searchTxt: {
@@ -66,36 +55,64 @@ class AddTask extends Component {
     minutes: '',
     comment: '',
 
-    taskType: TaskType,
-    projects: ProjectsList,
-    designationTypes: DesignationTypes,
+    taskType: [],
+    projects: [],
+    designationTypes: [],
     mainFeatures: [],
     selectedTaskType: '',
-    selectedProject: '',
+    selectedProject: {},
+    selectedInvolveProject:'',
     selectedDesignation: '',
     selectedMainFeature: '',
+    employeeId:''
   }
 
   async componentDidMount() {
+    this.setState({
+      employeeId: await localStorage.getItem(StorageStrings.USERID)
+    })
+    this.getAllInvolveProjects()
     // this.getAllTasks()
-    // this.getAllDesignations()
-    // this.getAllTaskTypes()
-    // this.getAllProjects()
+    this.getAllDesignations()
+    this.getAllTaskTypes()
+    this.getAllProjects()
   }
 
-  getAllTasks = () => {
-    this.setState({loading: true})
+  getAllInvolveProjects = () => {
     const data = {"all": 1}
-    TasksService.getAllTasks(data)
+    this.setState({loading: true})
+    ProjectService.getAllProjects(data)
       .then(res => {
         if (res.success) {
-          this.setState({loading: false})
-        } else {
+          const list = [];
+          res.data.project_list.map((item) => {
+            list.push({
+              projectId: item.id,
+              projectName: item.name,
+              designation: 'Frontend Developer'
+            })
+          })
+          this.setState({loading: false, list})
+        }else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
         }
       })
   }
+
+  // getAllTasks = () => {
+  //   this.setState({loading: true})
+  //   const data = {"all": 1}
+  //   TasksService.getAllTasks(data)
+  //     .then(res => {
+  //       if (res.success) {
+  //         this.setState({loading: false})
+  //       } else {
+  //         CommonFunc.notifyMessage(res.message);
+  //         this.setState({loading: false})
+  //       }
+  //     })
+  // }
 
   getAllTaskTypes = () => {
     const data = {"all": 1}
@@ -103,26 +120,30 @@ class AddTask extends Component {
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.map(item => ({
-            label:item.type_name,
-            value:item.id
-          }))
-          this.setState({taskType:list})
+          res.data.task_type_list.map(item => {
+            list.push({
+              label: item.type_name,
+              value: item.id
+            })
+          })
+          this.setState({taskType: list})
         }
       })
   }
 
   getAllDesignations = () => {
     const data = {"all": 1}
-    ProjectService.getAllProjects(data)
+    DesignationService.getAllDesignations(data)
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.map(item => ({
-            label:item.designation_name,
-            value:item.id
-          }))
-          this.setState({designationTypes:list})
+          res.data.designation_list.map(item => {
+            list.push({
+              label: item.designation_name,
+              value: item.id
+            })
+          })
+          this.setState({designationTypes: list})
         }
       })
   }
@@ -133,11 +154,13 @@ class AddTask extends Component {
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.project_list.map((item)=>({
-            value:item.id,
-            label:item.name,
-          }))
-          this.setState({loading: false,projects:list})
+          res.data.project_list.map((item) =>{
+            list.push({
+              value: item.id,
+              label: item.name,
+            })
+          })
+          this.setState({projects: list})
         }
       })
   }
@@ -179,19 +202,20 @@ class AddTask extends Component {
     } else {
       this.setState({loading: true})
       const data = {
-        employee_id:'1',
-        project_id:'1',
-        task_type_id: this.state.selectedTaskType,
-        task_detail:this.state.description,
+        employee_id: Number(this.state.employeeId),
+        project_id: this.state.selectedProject.projectId,
+        task_type_id: Number(this.state.selectedTaskType),
+        task_detail: this.state.description,
         date: this.state.date,
-        number_of_hour:this.state.hours + '.' + this.state.minutes.length > 0 ? this.state.minutes : 0,
+        number_of_hour: Number(`${this.state.hours}.${this.state.minutes.length > 0 ? this.state.minutes : '0'}`),
         comment: this.state.comment
       }
-      alert(JSON.stringify(data))
+
       await TasksService.createTask(data)
         .then(res => {
           if (res.success) {
             this.onTogglePopup()
+            this.setState({loading: false})
           } else {
             CommonFunc.notifyMessage(res.message);
             this.setState({loading: false})
@@ -241,7 +265,7 @@ class AddTask extends Component {
   // }
 
   render() {
-    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment} = this.state;
+    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment,selectedInvolveProject} = this.state;
 
     const listData = list.map((items, i) => (
       <tr key={i}>
@@ -309,10 +333,10 @@ class AddTask extends Component {
           <ModalBody className="pl-5 pr-5">
             <FormGroup row className="pl-5 pr-5">
               <Label>Select the project</Label>
-              <Input type="select" name="selectedProject" onChange={this.onTextChange}>
-                <option value="" disabled={selectedProject !== ""}>Select Project</option>
+              <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange}>
+                <option value="" disabled={selectedInvolveProject !== ""}>Select Project</option>
                 {projects.map(item => (
-                  <option value={item.value} selected={item.value === selectedProject}>{item.label}</option>
+                  <option value={item.value} selected={item.value === selectedInvolveProject}>{item.label}</option>
                 ))}
               </Input>
             </FormGroup>
@@ -345,17 +369,6 @@ class AddTask extends Component {
                 <Label sm={3}>Select the date</Label>
                 <Col sm={4}>
                   <Input type="date" name="date" onChange={this.onTextChange}/>
-                </Col>
-              </FormGroup>
-              <FormGroup row>
-                <Label sm={3}>Main Features</Label>
-                <Col sm={9}>
-                  <Input type="select" name="selectedMainFeature" onChange={this.onTextChange}>
-                    <option value="" disabled={selectedMainFeature !== ""}>Please select main feature</option>
-                    {mainFeatures.map(item => (
-                      <option value={item.value} selected={item.value === selectedMainFeature}>{item.label}</option>
-                    ))}
-                  </Input>
                 </Col>
               </FormGroup>
 
