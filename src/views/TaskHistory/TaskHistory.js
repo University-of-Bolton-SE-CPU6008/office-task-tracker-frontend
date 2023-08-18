@@ -18,6 +18,7 @@ import * as CommonFunc from "../../utils/CommonFunc";
 import Loader from "../../components/Loader/loading";
 import {DateRangePickerComponent} from '@syncfusion/ej2-react-calendars';
 import {DesignationTypes, ProjectsList, TaskType} from "../../constance/Constance";
+import * as ProjectService from "../../services/projects";
 
 class TaskHistory extends Component {
   state = {
@@ -61,6 +62,8 @@ class TaskHistory extends Component {
 
   async componentDidMount() {
     // await this.getAllTasks()
+    // this.getAllTasks()
+    // this.getAllProjects()
   }
 
   getAllTasks = async () => {
@@ -91,6 +94,7 @@ class TaskHistory extends Component {
       })
   }
 
+
   getAllTaskTypes = () => {
     const data = {"all": 1}
     TasksService.getAllTasksType(data)
@@ -102,6 +106,22 @@ class TaskHistory extends Component {
             value:item.id
           }))
           this.setState({taskType:list})
+        }
+      })
+  }
+
+  getAllProjects = () => {
+    this.setState({loading: true})
+    const data = {"all": 1}
+    ProjectService.getAllProjects(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.project_list.map((item)=>({
+            value:item.id,
+            label:item.name,
+          }))
+          this.setState({projects:list})
         }
       })
   }

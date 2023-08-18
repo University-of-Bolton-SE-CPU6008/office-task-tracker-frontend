@@ -80,6 +80,7 @@ class AddTask extends Component {
     // this.getAllTasks()
     // this.getAllDesignations()
     // this.getAllTaskTypes()
+    // this.getAllProjects()
   }
 
   getAllTasks = () => {
@@ -126,6 +127,20 @@ class AddTask extends Component {
       })
   }
 
+  getAllProjects = () => {
+    const data = {"all": 1}
+    ProjectService.getAllProjects(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.project_list.map((item)=>({
+            value:item.id,
+            label:item.name,
+          }))
+          this.setState({loading: false,projects:list})
+        }
+      })
+  }
 
   onTextChange = (event) => {
     let name = event.target.name;

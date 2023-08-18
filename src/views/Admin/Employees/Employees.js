@@ -124,7 +124,26 @@ class Employees extends Component {
     } else if (this.state.rePassword !== this.state.password) {
       CommonFunc.notifyMessage('password not match', 0);
     } else {
-      alert('ok')
+      this.setState({loading:true});
+      const data= {
+        "name": this.state.employeeName,//required
+        "email": this.state.employeeEmail,//required
+        "password": this.state.password,//required
+        "password_confirmation": this.state.rePassword,//required
+        "state": this.state.status,//required
+        "project_id": this.state.selectedInvolveProject,//required
+        "designation_id": this.state.selectedDesignation //required
+      }
+      EmployeeService.createEmployee(data)
+        .then(res=>{
+          if (res.success){
+            CommonFunc.notifyMessage('Record added', 1);
+            this.setState({loading:false});
+          }else {
+            CommonFunc.notifyMessage('Record added fail', 1);
+            this.setState({loading:false});
+          }
+        })
     }
   }
 

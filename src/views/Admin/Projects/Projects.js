@@ -62,7 +62,7 @@ class Projects extends Component {
             projectName:item.name,
             status:item.status === 1
           }))
-          this.setState({loading: false})
+          this.setState({loading: false,list})
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
