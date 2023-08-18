@@ -28,7 +28,7 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
   state = {
-    role: '',
+    role: null,
   }
 
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
@@ -97,7 +97,15 @@ class DefaultLayout extends Component {
                         )}/>
                     ) : null;
                   })}
-                  <Redirect from={"/"} to={BASE_URL + "/add-task"}/>
+                  {role !== null && (
+                    role !== 'admin' ? (
+                      <Redirect from={"/"} to={BASE_URL + "/add-task"}/>
+                    ) : (
+                      <Redirect from={"/"} to={BASE_URL + "/admin/all-tasks"}/>
+                    )
+                  )}
+
+
                 </Switch>
               </Suspense>
             </Container>

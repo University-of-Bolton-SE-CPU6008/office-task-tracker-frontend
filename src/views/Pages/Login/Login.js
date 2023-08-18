@@ -51,7 +51,7 @@ class Login extends Component {
             if (res.data.user.user_level!=='admin'){
               this.props.history.push(BASE_URL + '/add-task');
             }else {
-              this.props.history.push(BASE_URL + '/all-tasks');
+              this.props.history.push(BASE_URL + '/admin/all-tasks');
             }
 
           }else {

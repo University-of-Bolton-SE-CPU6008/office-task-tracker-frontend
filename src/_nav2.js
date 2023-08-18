@@ -3,17 +3,17 @@ export default {
   items: [
     {
       name: 'All Tasks',
-      url: BASE_URL+'/all-tasks',
+      url: BASE_URL+'/admin/all-tasks',
       icon: 'icon-puzzle',
     },
     {
       name: 'Manage Projects',
-      url: BASE_URL+'/manage-projects',
+      url: BASE_URL+'/admin/manage-projects',
       icon: 'icon-layers',
     },
     {
       name: 'Manage Employee',
-      url: BASE_URL+'/manage-employee',
+      url: BASE_URL+'/admin/manage-employee',
       icon: 'icon-people',
     }
   ],

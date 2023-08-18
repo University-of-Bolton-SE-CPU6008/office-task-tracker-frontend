@@ -26,9 +26,9 @@ const routes = [
   {path: BASE_URL + '/task-history', exact: true, name: 'Task History', component: TaskHistory},
   {path: BASE_URL + '/forgot-password', exact: true, name: 'Forgot Password Page', component: ForgotPWPage},
   {path: BASE_URL + '/Report', exact: true, name: 'Report', component: ReportPage},
-  {path: BASE_URL + '/all-tasks', exact: true, name: 'All Tasks', component: AllTasksPage},
-  {path: BASE_URL + '/manage-projects', exact: true, name: 'Manage Projects', component: ManageProjects},
-  {path: BASE_URL + '/manage-employee', exact: true, name: 'Manage Employee', component: ManageEmployee},
+  {path: BASE_URL + '/admin/all-tasks', exact: true, name: 'All Tasks', component: AllTasksPage},
+  {path: BASE_URL + '/admin/manage-projects', exact: true, name: 'Manage Projects', component: ManageProjects},
+  {path: BASE_URL + '/admin/manage-employee', exact: true, name: 'Manage Employee', component: ManageEmployee},
 ];
 
 export default routes;
