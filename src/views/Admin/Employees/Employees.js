@@ -20,52 +20,50 @@ import * as CommonFunc from "../../../utils/CommonFunc";
 import * as EmployeeService from "../../../services/employee";
 import Loader from "../../../components/Loader/loading";
 import * as ProjectService from "../../../services/projects";
+import * as DesignationService from "../../../services/designation";
 
 class Employees extends Component {
   state = {
-    list: [
-      {
-        id: 0,
-        employeeName: 'Kavinda Dilshan',
-        employeeEmail: 'kavindadilshan97@gmail.com',
-        password: '123456',
-        involveProjectId: [{id: 1, projectName: 'Synapse'}, {id: 2, projectName: 'APIT'}, {
-          id: 3,
-          projectName: 'TaskLab'
-        }, {id: 4, projectName: 'karuna.lk'}],
-        involveProject: {id: 1, project: "Edulab"},
-        designation: {id: 1, role: "Mobile Developer"},
-        status: true,
-        modelVisible: false,
-        isEdit: false
-      }
-    ],
+    list: [],
     password: '',
     rePassword: '',
     employeeName: '',
     employeeEmail: '',
     status: true,
-    selectedData: {},
     selectedDesignation: 0,
     selectedInvolveProject: 0,
-    designationTypes: DesignationTypes,
-    projectList: ProjectsList,
+    designationTypes: [],
+    projectList: [],
     isEdit: false,
-    loading:false
+    loading: false,
+    modelVisible: false
   }
 
   componentDidMount() {
-    // this.getAllEmployees();
-    // this.getAllDesignations();
+    this.getAllEmployees();
+    this.getAllDesignations();
+    this.getAllProjects();
   }
 
   getAllEmployees = () => {
     this.setState({loading: true})
     const data = {"all": 1}
-    EmployeeService.getAllEmployee()
+    EmployeeService.getAllEmployee(data)
       .then(res => {
         if (res.success) {
-          this.setState({loading: false})
+          const list = [];
+          res.data.employer_list.map(item => {
+            list.push({
+              id: item.id,
+              employeeName: item.user.name,
+              employeeEmail: item.user.email,
+              password: '123456',
+              involveProject: {id: item.projects[0].id, project: item.projects[0].name},
+              designation: {id: item.designation.id, role: item.designation.designation_name},
+              status: item.status === 1
+            })
+          })
+          this.setState({loading: false, list})
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
@@ -75,34 +73,73 @@ class Employees extends Component {
 
   getAllDesignations = () => {
     const data = {"all": 1}
+    DesignationService.getAllDesignations(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.designation_list.map(item => {
+            list.push({
+              label: item.designation_name,
+              value: item.id
+            })
+          })
+          this.setState({designationTypes: list})
+        }
+      })
+  }
+
+  getAllProjects = () => {
+    const data = {"all": 1}
     ProjectService.getAllProjects(data)
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.map(item => ({
-            label:item.designation_name,
-            value:item.id
-          }))
-          this.setState({designationTypes:list})
+          res.data.project_list.map(item => {
+            list.push({
+              label: item.name,
+              value: item.id
+            })
+          })
+          this.setState({projectList: list})
         }
       })
   }
 
   onTogglePopup = (item, isEdit) => {
-    this.setState({modelVisible: !this.state.modelVisible, projectName: ''})
-    if (item) {
-      this.setState({selectedData: item})
-    }
+    this.setState({modelVisible: !this.state.modelVisible})
+      this.setState({
+        password: item.password,
+        rePassword: item.password,
+        employeeName: item.employeeName,
+        employeeEmail: item.employeeEmail,
+        status: item.status,
+        selectedDesignation: item.designation.id,
+        selectedInvolveProject: item.involveProject.id,
+      })
     if (isEdit) {
-      this.setState({isEdit, selectedDesignation: item.designation.id, selectedInvolveProject: item.involveProject.id})
-    } else {
-      this.setState({isEdit: false})
+      this.setState({isEdit})
     }
 
   }
 
+  onPopupVisibility = () => {
+    this.setState({
+      modelVisible: !this.state.modelVisible,
+      password: "",
+      rePassword: "",
+      employeeName: "",
+      employeeEmail: "",
+      status: false,
+      selectedDesignation: 0,
+      selectedInvolveProject: 0,
+      isEdit:false
+    })
+  }
+
+
   onTextChange = (event) => {
     let name = event.target.name;
+    console.log(name)
     this.setState({
       [name]: event.target.value,
     });
@@ -124,8 +161,8 @@ class Employees extends Component {
     } else if (this.state.rePassword !== this.state.password) {
       CommonFunc.notifyMessage('password not match', 0);
     } else {
-      this.setState({loading:true});
-      const data= {
+      this.setState({loading: true});
+      const data = {
         "name": this.state.employeeName,//required
         "email": this.state.employeeEmail,//required
         "password": this.state.password,//required
@@ -134,16 +171,23 @@ class Employees extends Component {
         "project_id": this.state.selectedInvolveProject,//required
         "designation_id": this.state.selectedDesignation //required
       }
-      EmployeeService.createEmployee(data)
-        .then(res=>{
-          if (res.success){
-            CommonFunc.notifyMessage('Record added', 1);
-            this.setState({loading:false});
-          }else {
-            CommonFunc.notifyMessage('Record added fail', 1);
-            this.setState({loading:false});
-          }
-        })
+
+      if (!this.state.isEdit) {
+        EmployeeService.createEmployee(data)
+          .then(res => {
+            if (res.success) {
+              CommonFunc.notifyMessage('Employee has been added', 1);
+              this.onPopupVisibility();
+              this.getAllEmployees();
+            } else {
+              CommonFunc.notifyMessage('Employee added fail', 0);
+              this.setState({loading: false});
+            }
+          })
+      } else {
+        // edit endpoint
+      }
+
     }
   }
 
@@ -151,11 +195,6 @@ class Employees extends Component {
     const listData = this.state.list.map((items, i) => (
       <tr key={i}>
         <td className={"DescriptionTD"}>{items.employeeName}</td>
-        {/*<td className={"DescriptionTD"}>*/}
-        {/*  {items.involveProjectId.map(obj =>*/}
-        {/*    <Badge color="secondary" className="mr-1">{obj.projectName}</Badge>*/}
-        {/*  )}*/}
-        {/*</td>*/}
         <td className={"DescriptionTD"}>
           {items.involveProject.project}
         </td>
@@ -163,7 +202,7 @@ class Employees extends Component {
           {items.designation.role}
         </td>
         <td className={"DescriptionTD"}>
-          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status}/>
+          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status} disabled/>
         </td>
         <td className={'btn-align'}>
           <Button color="primary" className="btn-pill shadow"
@@ -182,7 +221,7 @@ class Employees extends Component {
                   <Col md="10"/>
                   <Col md="2" className="p-0">
                     <InputGroup className="d-inline-block text-right">
-                      <Button color="success" className="btn-pill shadow" onClick={() => this.onTogglePopup()}>Create
+                      <Button color="success" className="btn-pill shadow" onClick={() => this.onPopupVisibility()}>Create
                         User</Button>
                     </InputGroup>
                   </Col>
@@ -209,17 +248,17 @@ class Employees extends Component {
           </Col>
         </Row>
 
-        <Modal isOpen={this.state.modelVisible} toggle={this.onTogglePopup}
+        <Modal isOpen={this.state.modelVisible} toggle={this.onPopupVisibility}
                className={'modal-lg ' + this.props.className}>
           <ModalHeader
-            toggle={this.onTogglePopup}>{this.state.isEdit ? 'Edit Project' : 'Create new project'}</ModalHeader>
+            toggle={this.onPopupVisibility}>{this.state.isEdit ? 'Edit employee' : 'Create new employee'}</ModalHeader>
           <ModalBody className="pl-5 pr-5">
             <Form>
               <FormGroup row>
                 <Label sm={3}>Employee Name</Label>
                 <Col sm={6}>
                   <Input type="text" name="employeeName" placeHolder={"Employee Name"} onChange={this.onTextChange}
-                         value={this.state.selectedData.employeeName}/>
+                         value={this.state.employeeName}/>
                 </Col>
               </FormGroup>
 
@@ -227,7 +266,7 @@ class Employees extends Component {
                 <Label sm={3}>Employee Email</Label>
                 <Col sm={6}>
                   <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange}
-                         value={this.state.selectedData.employeeEmail}/>
+                         value={this.state.employeeEmail}/>
                 </Col>
               </FormGroup>
 
@@ -235,7 +274,11 @@ class Employees extends Component {
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
                   <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
-                             checked={this.state.selectedData.status}/>
+                             checked={this.state.status}
+                             onChange={() => {
+                               this.setState({status: !this.state.status})
+                             }}
+                  />
                 </Col>
               </FormGroup>
 
@@ -269,7 +312,7 @@ class Employees extends Component {
                 <Label sm={3}>Password</Label>
                 <Col sm={6}>
                   <Input type="password" name="password" placeHolder={"Password"} onChange={this.onTextChange}
-                         value={this.state.selectedData.password}/>
+                         value={this.state.password}/>
                 </Col>
               </FormGroup>
 
@@ -277,13 +320,13 @@ class Employees extends Component {
                 <Label sm={3}>Confirm Password</Label>
                 <Col sm={6}>
                   <Input type="password" name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange}
-                         value={this.state.selectedData.password}/>
+                         value={this.state.rePassword}/>
                 </Col>
               </FormGroup>
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
+            <Button color="secondary" onClick={this.onPopupVisibility}>Cancel</Button>
             <Button color="primary"
                     onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
           </ModalFooter>

@@ -6,21 +6,21 @@ export async function createEmployee(body) {
   apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `designation/create`;
+  apiObject.endpoint = `employee/create`;
   apiObject.multipart = false;
   apiObject.body = body;
   return await ApiService.callApi(apiObject);
 }
 
-export async function getAllEmployee() {
+export async function getAllEmployee(body) {
   const apiObject = {};
   apiObject.method = 'POST';
   apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `designation/get-all`;
+  apiObject.endpoint = `employee/get-all`;
   apiObject.multipart = false;
-  apiObject.body = null;
+  apiObject.body = body;
   return await ApiService.callApi(apiObject);
 }
 
@@ -30,7 +30,7 @@ export async function getEmployeeFindById(id) {
   apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `designation/${id}`;
+  apiObject.endpoint = `employee/${id}`;
   apiObject.multipart = false;
   apiObject.body = null;
   return await ApiService.callApi(apiObject);
