@@ -318,7 +318,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Password</Label>
                 <Col sm={6}>
-                  <Input type="password" name="password" placeHolder={"Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="password" placeHolder={"Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.password}/>
                 </Col>
               </FormGroup>
@@ -326,7 +326,7 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Confirm Password</Label>
                 <Col sm={6}>
-                  <Input type="password" name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.rePassword}/>
                 </Col>
               </FormGroup>
