@@ -42,12 +42,12 @@ class Projects extends Component {
     projectName: '',
     modelVisible: false,
     isEdit: false,
-    loading:false,
-    status:false
+    loading: false,
+    status: false
   }
 
   componentDidMount() {
-    // this.getAllProjects();
+    this.getAllProjects();
   }
 
   getAllProjects = () => {
@@ -57,12 +57,14 @@ class Projects extends Component {
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.project_list.map((item)=>({
-            id:item.id,
-            projectName:item.name,
-            status:item.status === 1
-          }))
-          this.setState({loading: false,list})
+          res.data.project_list.map((item) => {
+            list.push({
+              id: item.id,
+              projectName: item.name,
+              status: item.status === 1
+            })
+          })
+          this.setState({loading: false, list})
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
@@ -78,7 +80,7 @@ class Projects extends Component {
   }
 
   onTogglePopup = (item, isEdit) => {
-    this.setState({modelVisible: !this.state.modelVisible, projectName: ''})
+    this.setState({modelVisible: !this.state.modelVisible, projectName: '',status:false})
     if (item) {
       this.setState({selectedData: item})
     }
@@ -92,23 +94,30 @@ class Projects extends Component {
 
   onSave = () => {
     if (!Validations.textFieldValidator(this.state.projectName, 1)) {
-      CommonFunc.notifyMessage("Please enter project name",0);
+      CommonFunc.notifyMessage("Please enter project name", 0);
     } else {
       this.setState({loading: true})
       const data = {
         name: this.state.projectName,
         status: this.state.status
       }
-      ProjectService.createProjects(data)
-        .then(res=>{
-          if (res.success){
-            CommonFunc.notifyMessage("Record Added",1);
-            this.setState({loading: false})
-          }else {
-            CommonFunc.notifyMessage(res.message);
-            this.setState({loading: false})
-          }
-        })
+
+      if (!this.state.isEdit){
+        ProjectService.createProjects(data)
+          .then(res => {
+            if (res.success) {
+              CommonFunc.notifyMessage("Record Added", 1);
+              this.onTogglePopup();
+              this.getAllProjects();
+            } else {
+              CommonFunc.notifyMessage(res.message);
+              this.setState({loading: false})
+            }
+          })
+      }else {
+
+      }
+
     }
   }
 
@@ -176,7 +185,14 @@ class Projects extends Component {
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
                   <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
-                             checked={this.state.selectedData.status} onChange={(item) => this.setState({status:item})}/>
+                             checked={this.state.selectedData.status}
+                             onChange={(item) => {
+                               if (this.state.isEdit){
+                                 this.setState({status:!this.state.selectedData.status})
+                               }else {
+                                 this.setState({status:!this.state.status})
+                               }
+                             }}/>
                 </Col>
               </FormGroup>
             </Form>
