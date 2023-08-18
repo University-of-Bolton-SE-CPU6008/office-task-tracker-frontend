@@ -19,6 +19,7 @@ import * as Validations from "../../../validation/Validation";
 import * as CommonFunc from "../../../utils/CommonFunc";
 import * as EmployeeService from "../../../services/employee";
 import Loader from "../../../components/Loader/loading";
+import * as ProjectService from "../../../services/projects";
 
 class Employees extends Component {
   state = {
@@ -55,6 +56,7 @@ class Employees extends Component {
 
   componentDidMount() {
     // this.getAllEmployees();
+    // this.getAllDesignations();
   }
 
   getAllEmployees = () => {
@@ -67,6 +69,21 @@ class Employees extends Component {
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
+        }
+      })
+  }
+
+  getAllDesignations = () => {
+    const data = {"all": 1}
+    ProjectService.getAllProjects(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.map(item => ({
+            label:item.designation_name,
+            value:item.id
+          }))
+          this.setState({designationTypes:list})
         }
       })
   }

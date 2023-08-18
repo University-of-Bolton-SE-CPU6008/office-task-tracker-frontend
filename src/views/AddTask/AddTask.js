@@ -25,6 +25,8 @@ import {Link} from "react-router-dom";
 import {BASE_URL, DesignationTypes, ProjectsList, TaskType} from "../../constance/Constance";
 import './AddTask.scss';
 import * as TasksService from '../../services/tasks';
+import * as ProjectService from '../../services/projects';
+import * as DesignationService from '../../services/designation';
 import * as CommonFunc from '../../utils/CommonFunc';
 import Loader from "../../components/Loader/loading";
 import {StorageStrings} from "../../constance/StorageStrings";
@@ -76,6 +78,8 @@ class AddTask extends Component {
 
   async componentDidMount() {
     // this.getAllTasks()
+    // this.getAllDesignations()
+    // this.getAllTaskTypes()
   }
 
   getAllTasks = () => {
@@ -103,6 +107,21 @@ class AddTask extends Component {
             value:item.id
           }))
           this.setState({taskType:list})
+        }
+      })
+  }
+
+  getAllDesignations = () => {
+    const data = {"all": 1}
+    ProjectService.getAllProjects(data)
+      .then(res => {
+        if (res.success) {
+          const list = [];
+          res.data.map(item => ({
+            label:item.designation_name,
+            value:item.id
+          }))
+          this.setState({designationTypes:list})
         }
       })
   }
@@ -136,8 +155,6 @@ class AddTask extends Component {
 
     if (!Validations.textFieldValidator(this.state.date, 1)) {
       CommonFunc.notifyMessage('Please enter date', 0);
-    } else if (!Validations.textFieldValidator(this.state.selectedTaskType, 1)) {
-      CommonFunc.notifyMessage('Please select main feature', 0);
     } else if (!Validations.textFieldValidator(this.state.description, 1)) {
       CommonFunc.notifyMessage('Please enter task description', 0);
     } else if (!Validations.textFieldValidator(this.state.hours, 1)) {
@@ -147,27 +164,28 @@ class AddTask extends Component {
     } else {
       this.setState({loading: true})
       const data = {
+        employee_id:'1',
+        project_id:'1',
+        task_type_id: this.state.selectedTaskType,
+        task_detail:this.state.description,
         date: this.state.date,
-        mainFeatures: this.state.selectedMainFeature,
-        description: this.state.description,
-        numberOfHours: this.state.hours + '.' + this.state.minutes.length > 0 ? this.state.minutes : 0,
-        taskType: this.state.selectedTaskType,
+        number_of_hour:this.state.hours + '.' + this.state.minutes.length > 0 ? this.state.minutes : 0,
         comment: this.state.comment
       }
       alert(JSON.stringify(data))
-      // await TasksService.saveProduct(data)
-      //   .then(res => {
-      //     if (res.success) {
-      //       this.onTogglePopup()
-      //     } else {
-      //       CommonFunc.notifyMessage(res.message);
-      //       this.setState({loading: false})
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //     this.setState({loading: false})
-      //   })
+      await TasksService.createTask(data)
+        .then(res => {
+          if (res.success) {
+            this.onTogglePopup()
+          } else {
+            CommonFunc.notifyMessage(res.message);
+            this.setState({loading: false})
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.setState({loading: false})
+        })
     }
 
 
