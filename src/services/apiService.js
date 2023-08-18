@@ -48,7 +48,7 @@ export const callApi = async (apiObject) => {
           window.location = constants.BASE_URL + '/login';
         }
       }
-      result = await {...response.data, datas:response.data, status: response.data.message === 'Success' || response.data.message === 'OK' ? 1 : 0, success: response.data.message === 'Success' || response.data.message === 'OK' || response.data.message === undefined};
+      result = await {data:response.data,  status: response.data.message === 'Success' || response.data.message === 'OK' ? 1 : 0, success: response.data.message === 'Success' || response.data.message === 'OK' || response.data.message === undefined};
     })
     .catch(async error => {
 
