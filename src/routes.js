@@ -14,6 +14,7 @@ const ReportPage = React.lazy(() => import('./views/Report/Report'));
 const AllTasksPage = React.lazy(() => import('./views/Admin/AllTasks/AllTasks'));
 const ManageProjects = React.lazy(() => import('./views/Admin/Projects/Projects'));
 const ManageEmployee = React.lazy(() => import('./views/Admin/Employees/Employees'));
+const ResetPw = React.lazy(() => import('./views/Pages/RestPW/ResetPW'));
 
 
 const routes = [
@@ -25,6 +26,7 @@ const routes = [
   {path: BASE_URL + '/500', exact: true, name: '500 Page', component: ErrorPage1},
   {path: BASE_URL + '/task-history', exact: true, name: 'Task History', component: TaskHistory},
   {path: BASE_URL + '/forgot-password', exact: true, name: 'Forgot Password Page', component: ForgotPWPage},
+  {path: BASE_URL + '/change-password', exact: true, name: 'Change Password', component: ResetPw},
   {path: BASE_URL + '/Report', exact: true, name: 'Report', component: ReportPage},
   {path: BASE_URL + '/admin/all-tasks', exact: true, name: 'All Tasks', component: AllTasksPage},
   {path: BASE_URL + '/admin/manage-projects', exact: true, name: 'Manage Projects', component: ManageProjects},
