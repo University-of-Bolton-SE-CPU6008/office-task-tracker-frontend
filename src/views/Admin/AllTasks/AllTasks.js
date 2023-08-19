@@ -41,13 +41,13 @@ class AllTasks extends Component {
             list.push({
               id: item.id,
               date: item.date,
-              username: 'dilshan',
+              username: item.user.name,
               projectName: item.project.name,
               numOfHours: Math.floor(item.number_of_hour)!==Number(item.number_of_hour)?item.number_of_hour:Number(item.number_of_hour).toFixed(2),
               taskType: item.task_type.type_name,
               description: item.task_detail,
               comment: item.comment,
-              designation: 'UI Developer'
+              designation: item.designation_name.designation_name
             })
           })
 
