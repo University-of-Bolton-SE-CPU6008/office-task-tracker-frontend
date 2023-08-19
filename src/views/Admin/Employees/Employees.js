@@ -38,7 +38,7 @@ class Employees extends Component {
     loading: false,
     modelVisible: false,
     readOnly: false,
-    selectedProjects:[]
+    selectedProjects: []
   }
 
   componentDidMount() {
@@ -61,7 +61,7 @@ class Employees extends Component {
               employeeEmail: item.user.email,
               password: '123456',
               involveProject: {id: item.projects[0].id, project: item.projects[0].name},
-              projects:item.projects,
+              projects: item.projects,
               designation: {id: item.designation.id, role: item.designation.designation_name},
               status: item.status === 1
             })
@@ -118,7 +118,7 @@ class Employees extends Component {
       status: item.status,
       selectedDesignation: item.designation.id,
       selectedInvolveProject: item.involveProject.id,
-      selectedProjects:item.projects
+      selectedProjects: item.projects
     })
     if (isEdit) {
       this.setState({isEdit})
@@ -137,7 +137,7 @@ class Employees extends Component {
       selectedDesignation: 0,
       selectedInvolveProject: 0,
       isEdit: false,
-      readOnly:false
+      readOnly: false
     })
   }
 
@@ -196,13 +196,31 @@ class Employees extends Component {
     }
   }
 
+  updateStatus = (item) => {
+    const data = {
+      id: item.id,
+      status: !item.status
+    }
+    this.setState({loading: true});
+    EmployeeService.updateEmployeeStatus(data)
+      .then(res => {
+        if (res.success) {
+          CommonFunc.notifyMessage('Employee status updated', 1);
+          this.getAllEmployees()
+        } else {
+          CommonFunc.notifyMessage('Something went wrong!', 0);
+          this.setState({loading: false});
+        }
+      })
+  }
+
   render() {
     const listData = this.state.list.map((items, i) => (
       <tr key={i}>
         <td className={"DescriptionTD"}>{items.employeeName}</td>
         <td className={"DescriptionTD"}>
           {/*{items.involveProject.project}*/}
-          {items.projects.map((item)=>(
+          {items.projects.map((item) => (
             <Badge color="primary" pill>{item.name}</Badge>
           ))}
         </td>
@@ -210,7 +228,9 @@ class Employees extends Component {
           {items.designation.role}
         </td>
         <td className={"DescriptionTD"}>
-          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status} disabled/>
+          <AppSwitch variant={'pill'} label color={'success'} size={'sm'} checked={items.status} onChange={() => {
+            this.updateStatus(items)
+          }}/>
         </td>
         <td className={'btn-align'}>
           <Button color="dark" className="btn-pill shadow" onClick={() => {
@@ -269,7 +289,8 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Employee Name</Label>
                 <Col sm={6}>
-                  <Input type="text" name="employeeName" placeHolder={"Employee Name"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type="text" name="employeeName" placeHolder={"Employee Name"} onChange={this.onTextChange}
+                         disabled={this.state.readOnly}
                          value={this.state.employeeName}/>
                 </Col>
               </FormGroup>
@@ -277,7 +298,8 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Employee Email</Label>
                 <Col sm={6}>
-                  <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type="email" name="employeeEmail" placeHolder={"Employee Email"} onChange={this.onTextChange}
+                         disabled={this.state.readOnly}
                          value={this.state.employeeEmail}/>
                 </Col>
               </FormGroup>
@@ -299,7 +321,8 @@ class Employees extends Component {
                 <FormGroup row>
                   <Label sm={3}>Involve Project</Label>
                   <Col sm={5}>
-                    <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange} disabled={this.state.readOnly}>
+                    <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange}
+                           disabled={this.state.readOnly}>
                       <option value="" disabled={this.state.selectedInvolveProject !== 0}>Select Project</option>
                       {this.state.projectList.map(item => (
                         <option value={item.value}
@@ -308,12 +331,13 @@ class Employees extends Component {
                     </Input>
                   </Col>
                 </FormGroup>
-              ):(
+              ) : (
                 <FormGroup row>
                   <Label sm={3}>Involve Project</Label>
-                  <Col sm={5} className=" ml-3 p-1 w-75 pt-2" style={{borderRadius:5,borderWidth:1,backgroundColor:'#E4E7EA'}}>
+                  <Col sm={5} className=" ml-3 p-1 w-75 pt-2"
+                       style={{borderRadius: 5, borderWidth: 1, backgroundColor: '#E4E7EA'}}>
                     <Row className=" ml-1 w-100">
-                      {this.state.selectedProjects.map((item)=>(
+                      {this.state.selectedProjects.map((item) => (
                         <h6><Badge color="primary" pill className="mr-2">{item.name}</Badge></h6>
                       ))}
                     </Row>
@@ -325,7 +349,8 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Designation type</Label>
                 <Col sm={5}>
-                  <Input type="select" name="selectedDesignation" onChange={this.onTextChange} disabled={this.state.readOnly}>
+                  <Input type="select" name="selectedDesignation" onChange={this.onTextChange}
+                         disabled={this.state.readOnly}>
                     <option value="" disabled={this.state.selectedDesignation !== 0}>Select Designation</option>
                     {this.state.designationTypes.map(item => (
                       <option value={item.value}
@@ -338,7 +363,8 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Password</Label>
                 <Col sm={6}>
-                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="password" placeHolder={"Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="password"
+                         placeHolder={"Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.password}/>
                 </Col>
               </FormGroup>
@@ -346,7 +372,8 @@ class Employees extends Component {
               <FormGroup row>
                 <Label sm={3}>Confirm Password</Label>
                 <Col sm={6}>
-                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="rePassword" placeHolder={"Confirm Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
+                  <Input type={`${this.state.readOnly || this.state.isEdit ? 'text' : 'password'}`} name="rePassword"
+                         placeHolder={"Confirm Password"} onChange={this.onTextChange} disabled={this.state.readOnly}
                          value={this.state.rePassword}/>
                 </Col>
               </FormGroup>

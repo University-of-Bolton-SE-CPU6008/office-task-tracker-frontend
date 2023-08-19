@@ -24,6 +24,18 @@ export async function getAllEmployee(body) {
   return await ApiService.callApi(apiObject);
 }
 
+export async function updateEmployeeStatus(body) {
+  const apiObject = {};
+  apiObject.method = 'PUT';
+  apiObject.authentication = true;
+  apiObject.isBasicAuth = false;
+  apiObject.urlencoded = false;
+  apiObject.endpoint = `employee/status-update`;
+  apiObject.multipart = false;
+  apiObject.body = body;
+  return await ApiService.callApi(apiObject);
+}
+
 export async function getEmployeeFindById(id) {
   const apiObject = {};
   apiObject.method = 'GET';
