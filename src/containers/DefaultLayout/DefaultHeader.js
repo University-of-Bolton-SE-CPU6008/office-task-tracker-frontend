@@ -62,8 +62,9 @@ class DefaultHeader extends Component {
             </DropdownToggle>
             <DropdownMenu right style={{right: 'auto'}}>
               <DropdownItem header tag="div" className="text-center"><strong>Account</strong></DropdownItem>
+              <DropdownItem onClick={()=>window.location = constants.BASE_URL + '/change-password'}><i className="icon-wrench"></i> Change Password</DropdownItem>
               <DropdownItem onClick={e => this.logoutHandler(e)}>
-                <i className="cui-account-logout icons"></i> Logout</DropdownItem>
+                <i className="icon-logout"></i> Logout</DropdownItem>
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
