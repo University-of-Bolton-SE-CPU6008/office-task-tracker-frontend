@@ -30,7 +30,7 @@ export async function getEmployeeFindById(id) {
   apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `employee/${id}`;
+  apiObject.endpoint = `user/${id}`;
   apiObject.multipart = false;
   apiObject.body = null;
   return await ApiService.callApi(apiObject);

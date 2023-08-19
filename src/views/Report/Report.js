@@ -15,13 +15,14 @@ class Report extends Component {
   }
 
   componentDidMount() {
-
+    this.getTaskReports()
   }
 
   getTaskReports = () => {
     this.setState({loading: true})
     TasksService.getTaskReport()
       .then(res => {
+        console.log(res)
         if (res.success) {
           this.setState({loading: false})
         } else {

@@ -37,7 +37,8 @@ class Employees extends Component {
     isEdit: false,
     loading: false,
     modelVisible: false,
-    readOnly: false
+    readOnly: false,
+    selectedProjects:[]
   }
 
   componentDidMount() {
@@ -60,6 +61,7 @@ class Employees extends Component {
               employeeEmail: item.user.email,
               password: '123456',
               involveProject: {id: item.projects[0].id, project: item.projects[0].name},
+              projects:item.projects,
               designation: {id: item.designation.id, role: item.designation.designation_name},
               status: item.status === 1
             })
@@ -116,6 +118,7 @@ class Employees extends Component {
       status: item.status,
       selectedDesignation: item.designation.id,
       selectedInvolveProject: item.involveProject.id,
+      selectedProjects:item.projects
     })
     if (isEdit) {
       this.setState({isEdit})
@@ -198,7 +201,10 @@ class Employees extends Component {
       <tr key={i}>
         <td className={"DescriptionTD"}>{items.employeeName}</td>
         <td className={"DescriptionTD"}>
-          {items.involveProject.project}
+          {/*{items.involveProject.project}*/}
+          {items.projects.map((item)=>(
+            <Badge color="primary" pill>{item.name}</Badge>
+          ))}
         </td>
         <td className={"DescriptionTD"}>
           {items.designation.role}
@@ -211,8 +217,8 @@ class Employees extends Component {
             this.setState({readOnly: true})
             this.onTogglePopup(items, false)
           }}>View</Button>
-          <Button color="primary" className="btn-pill shadow"
-                  onClick={() => this.onTogglePopup(items, true)}>Edit</Button>
+          {/*<Button color="primary" className="btn-pill shadow"*/}
+          {/*        onClick={() => this.onTogglePopup(items, true)}>Edit</Button>*/}
         </td>
       </tr>
     ));
@@ -289,18 +295,32 @@ class Employees extends Component {
                 </Col>
               </FormGroup>
 
-              <FormGroup row>
-                <Label sm={3}>Involve Project</Label>
-                <Col sm={5}>
-                  <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange} disabled={this.state.readOnly}>
-                    <option value="" disabled={this.state.selectedInvolveProject !== 0}>Select Project</option>
-                    {this.state.projectList.map(item => (
-                      <option value={item.value}
-                              selected={item.value === this.state.selectedInvolveProject}>{item.label}</option>
-                    ))}
-                  </Input>
-                </Col>
-              </FormGroup>
+              {!this.state.readOnly ? (
+                <FormGroup row>
+                  <Label sm={3}>Involve Project</Label>
+                  <Col sm={5}>
+                    <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange} disabled={this.state.readOnly}>
+                      <option value="" disabled={this.state.selectedInvolveProject !== 0}>Select Project</option>
+                      {this.state.projectList.map(item => (
+                        <option value={item.value}
+                                selected={item.value === this.state.selectedInvolveProject}>{item.label}</option>
+                      ))}
+                    </Input>
+                  </Col>
+                </FormGroup>
+              ):(
+                <FormGroup row>
+                  <Label sm={3}>Involve Project</Label>
+                  <Col sm={5} className=" ml-3 p-1 w-75 pt-2" style={{borderRadius:5,borderWidth:1,backgroundColor:'#E4E7EA'}}>
+                    <Row className=" ml-1 w-100">
+                      {this.state.selectedProjects.map((item)=>(
+                        <h6><Badge color="primary" pill className="mr-2">{item.name}</Badge></h6>
+                      ))}
+                    </Row>
+                  </Col>
+                </FormGroup>
+              )}
+
 
               <FormGroup row>
                 <Label sm={3}>Designation type</Label>
@@ -334,8 +354,11 @@ class Employees extends Component {
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" onClick={this.onPopupVisibility}>Cancel</Button>
-            <Button color="primary"
-                    onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
+            {!this.state.readOnly && (
+              <Button color="primary"
+                      onClick={this.onSave}>{!this.state.isEdit ? 'Submit' : 'Edit'}</Button>
+            )}
+
           </ModalFooter>
         </Modal>
         {this.state.loading && (

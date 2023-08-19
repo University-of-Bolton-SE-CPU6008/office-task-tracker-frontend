@@ -27,6 +27,7 @@ import './AddTask.scss';
 import * as TasksService from '../../services/tasks';
 import * as ProjectService from '../../services/projects';
 import * as DesignationService from '../../services/designation';
+import * as EmployeeService from '../../services/employee';
 import * as CommonFunc from '../../utils/CommonFunc';
 import Loader from "../../components/Loader/loading";
 import {StorageStrings} from "../../constance/StorageStrings";
@@ -61,21 +62,45 @@ class AddTask extends Component {
     mainFeatures: [],
     selectedTaskType: '',
     selectedProject: {},
-    selectedInvolveProject:'',
-    selectedDesignation: '',
+    selectedInvolveProject: '',
+    selectedDesignation: {label:'QA',value:1},
     selectedMainFeature: '',
-    employeeId:''
+    employeeId: '',
+    today: ""
   }
 
   async componentDidMount() {
-    this.setState({
-      employeeId: await localStorage.getItem(StorageStrings.USERID)
-    })
+
+    const date = new Date();
+
+    let currentDay = String(date.getDate()).padStart(2, '0');
+
+    let currentMonth = String(date.getMonth() + 1).padStart(2, "0");
+
+    let currentYear = date.getFullYear();
+
+
+    let currentDate = `${currentYear}-${currentMonth}-${currentDay}`;
+
+
+    this.setState({today: currentDate.toString()})
+
     this.getAllInvolveProjects()
     // this.getAllTasks()
     this.getAllDesignations()
     this.getAllTaskTypes()
     this.getAllProjects()
+    await this.getEmployeeDetails()
+  }
+
+  getEmployeeDetails = async () => {
+    const userId = await localStorage.getItem(StorageStrings.USERID);
+    EmployeeService.getEmployeeFindById(userId)
+      .then(res => {
+        if (res.success) {
+
+        }
+      })
   }
 
   getAllInvolveProjects = () => {
@@ -93,7 +118,7 @@ class AddTask extends Component {
             })
           })
           this.setState({loading: false, list})
-        }else {
+        } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
         }
@@ -154,7 +179,7 @@ class AddTask extends Component {
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.project_list.map((item) =>{
+          res.data.project_list.map((item) => {
             list.push({
               value: item.id,
               label: item.name,
@@ -170,6 +195,18 @@ class AddTask extends Component {
     this.setState({
       [name]: event.target.value,
     });
+  }
+
+  onTextChange2 = (event) => {
+    let name = event.target.name;
+
+    const regex = /^-?\d+\.?\d*$/;
+    if ((event.target.value).match(regex) || (event.target.value).length === 0) {
+      this.setState({
+        [name]: event.target.value,
+      });
+    }
+
   }
 
   onTogglePopup = (item) => {
@@ -265,7 +302,7 @@ class AddTask extends Component {
   // }
 
   render() {
-    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment,selectedInvolveProject} = this.state;
+    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment, selectedInvolveProject} = this.state;
 
     const listData = list.map((items, i) => (
       <tr key={i}>
@@ -341,13 +378,8 @@ class AddTask extends Component {
               </Input>
             </FormGroup>
             <FormGroup row className="pl-5 pr-5">
-              <Label>Select Designation</Label>
-              <Input type="select" name="selectedDesignation" onChange={this.onTextChange}>
-                <option value="" disabled={selectedDesignation !== ""}>Select designation</option>
-                {designationTypes.map(item => (
-                  <option value={item.value} selected={item.value === selectedDesignation}>{item.label}</option>
-                ))}
-              </Input>
+              <Label>Designation</Label>
+              <Input type="text" name="selectedDesignation" disabled={true} value={selectedDesignation}/>
             </FormGroup>
           </ModalBody>
           <ModalFooter>
@@ -368,7 +400,7 @@ class AddTask extends Component {
               <FormGroup row>
                 <Label sm={3}>Select the date</Label>
                 <Col sm={4}>
-                  <Input type="date" name="date" onChange={this.onTextChange}/>
+                  <Input type="date" name="date" onChange={this.onTextChange} max={this.state.today}/>
                 </Col>
               </FormGroup>
 
@@ -384,14 +416,14 @@ class AddTask extends Component {
                 <Label sm={3}>Number of hours</Label>
                 <Row className="pl-3">
                   <Col sm={3}>
-                    <Input type="number" name="hours" placeholder="Hours"
+                    <Input type="text" name="hours" placeholder="Hours" maxlength="2"
                            value={hours}
-                           onChange={this.onTextChange}/>
+                           onChange={this.onTextChange2}/>
                   </Col>
                   <Col sm={3} className="pl-0 ml-0">
-                    <Input type="number" name="minutes" placeholder="Minutes"
+                    <Input type="text" name="minutes" placeholder="Minutes" maxlength="2"
                            value={minutes}
-                           onChange={this.onTextChange}/>
+                           onChange={this.onTextChange2}/>
                   </Col>
                 </Row>
 

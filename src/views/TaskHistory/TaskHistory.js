@@ -22,26 +22,7 @@ import * as ProjectService from "../../services/projects";
 
 class TaskHistory extends Component {
   state = {
-    list: [
-      {
-        id:1,
-        date:'2023/06/06',
-        projectName:'Project 01',
-        designation:'Mobile Developer',
-        mainFeatures:'Bug Fixes',
-        taskType:'Development',
-        hours:'2.30'
-      },
-      {
-        id:2,
-        date:'2023/06/07',
-        projectName:'Project 02',
-        designation:'Backend Developer',
-        mainFeatures:'Bug Fixes',
-        taskType:'Development',
-        hours:'5.30'
-      }
-    ],
+    list: [],
     loading: false,
     modelVisible: false,
     taskId: '',
@@ -53,44 +34,49 @@ class TaskHistory extends Component {
     taskType: TaskType,
     projects: ProjectsList,
     designationTypes: DesignationTypes,
-    mainFeatures: [],
     selectedTaskType: '',
-    selectedProject: '',
     selectedDesignation: '',
     selectedMainFeature: '',
+    selectedProject: {},
+    totalHours:0
   }
 
   async componentDidMount() {
-    // await this.getAllTasks()
-    // this.getAllTasks()
-    // this.getAllProjects()
+    this.getAllTasks()
+    this.getAllProjects()
+    this.getAllTaskTypes()
   }
 
-  getAllTasks = async () => {
+  getAllTasks = () => {
     this.setState({loading: true})
-    await TasksService.getAllTasks()
+    const data = {"all": 1}
+    TasksService.getAllTasks(data)
       .then(res => {
         const list = [];
         if (res.success) {
-          res.datas.map(item => {
+          res.data.task_list && res.data.task_list.map(item => {
             list.push({
-              orderNo: item.orderId,
-              itemName: item.productName,
-              qty: item.qty,
-              price: item.price,
-              expectedDate: item.expectedDate.split('T')[0],
-              country: item.country.toUpperCase(),
-              address:item.deliveryAddress
+              id: item.id,
+              date: item.date,
+              username: 'dilshan',
+              projectName: item.project.name,
+              numOfHours: Math.floor(item.number_of_hour) !== Number(item.number_of_hour) ? item.number_of_hour : Number(item.number_of_hour).toFixed(2),
+              taskType: item.task_type.type_name,
+              description: item.task_detail,
+              comment: item.comment,
+              designation: 'UI Developer'
             })
           })
-          this.setState({loading: false, list: list})
+
+          let val = 0;
+          for (let i = 0; i < list.length; i++) {
+            val = Number(val) + Number(list[i].numOfHours)
+          }
+          this.setState({loading: false, list: list,totalHours:val})
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
         }
-      })
-      .catch(err => {
-        this.setState({loading: false})
       })
   }
 
@@ -101,61 +87,54 @@ class TaskHistory extends Component {
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.map(item => ({
-            label:item.type_name,
-            value:item.id
-          }))
-          this.setState({taskType:list})
+          res.data.task_type_list.map(item => {
+            list.push({
+              label: item.type_name,
+              value: item.id
+            })
+          })
+          this.setState({taskType: list})
         }
       })
   }
 
   getAllProjects = () => {
-    this.setState({loading: true})
     const data = {"all": 1}
     ProjectService.getAllProjects(data)
       .then(res => {
         if (res.success) {
           const list = [];
-          res.data.project_list.map((item)=>({
-            value:item.id,
-            label:item.name,
-          }))
-          this.setState({projects:list})
+          res.data.project_list.map((item) => {
+            list.push({
+              value: item.id,
+              label: item.name,
+            })
+          })
+          this.setState({projects: list})
         }
       })
   }
 
   onTogglePopup = (item) => {
     this.setState({modelVisible: !this.state.modelVisible})
-    this.setState({
-      date: '',
-      selectedMainFeature: '',
-      description: '',
-      hours: '',
-      minutes: '',
-      selectedTaskType: '',
-      comment:'',
-    })
-    if (item){
-      this.setState({selectedProject:item})
+    if (item) {
+      this.setState({selectedProject: item})
     }
 
   }
 
   render() {
-    const {list, loading, comment, date, description, designationTypes, hours, mainFeatures, minutes, modelVisible, projects, selectedDesignation, selectedMainFeature, selectedProject, selectedTaskType, taskId, taskType } = this.state;
+    const {list, loading, comment, date, description, designationTypes, hours, minutes, modelVisible, projects, selectedDesignation, selectedMainFeature, selectedProject, selectedTaskType, taskId, taskType} = this.state;
     const listData = list.map((items, i) => (
       <tr key={i}>
         <td>{items.date}</td>
         <td>{items.projectName}</td>
         <td>{items.designation}</td>
-        <td>{items.mainFeatures}</td>
         <td>{items.taskType}</td>
-        <td>{items.hours}</td>
+        <td>{items.numOfHours}</td>
         <td className={'btn-align'}>
           <Button color="success" className="btn-pill shadow"
-            onClick={() => this.onTogglePopup(items)}
+                  onClick={() => this.onTogglePopup(items)}
           >View More</Button>
         </td>
       </tr>
@@ -218,7 +197,6 @@ class TaskHistory extends Component {
                     <th>Date</th>
                     <th>Project Name</th>
                     <th>Designation</th>
-                    <th>Main Feature</th>
                     <th>Task Type</th>
                     <th>Hours</th>
                     <th>Action</th>
@@ -237,79 +215,65 @@ class TaskHistory extends Component {
             <Alert color="dark">
               <Row className="align-items-center justify-content-center">
                 <Label className="font-weight-bold mr-1 font-2xl">Total:</Label>
-                <Label className="font-weight-bold font-2xl text-danger">5.30</Label>
+                <Label className="font-weight-bold font-2xl text-danger">{this.state.totalHours}</Label>
                 <Label className="font-weight-bold font-2xl ml-1">Hours</Label>
               </Row>
             </Alert>
           </Col>
         </Row>
 
-        <Modal isOpen={modelVisible} toggle={this.onTogglePopup}
+        <Modal isOpen={this.state.modelVisible} toggle={this.onTogglePopup}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={this.onTogglePopup}>{`Project Name : ${selectedProject.projectName}`}</ModalHeader>
+          <ModalHeader toggle={this.onTogglePopup}>{`Project Name : ${this.state.selectedProject.projectName}`} <br/>
+            <span className="font-sm">{this.state.selectedProject.designation}</span></ModalHeader>
 
           <ModalBody className="pl-5 pr-5">
             <Form>
               <FormGroup row>
                 <Label sm={3}>Select the date</Label>
                 <Col sm={4}>
-                  <Input type="date" name="date" onChange={this.onTextChange}/>
-                </Col>
-              </FormGroup>
-              <FormGroup row>
-                <Label sm={3}>Main Features</Label>
-                <Col sm={9}>
-                  <Input type="select" name="selectedMainFeature" onChange={this.onTextChange}>
-                    <option value="" disabled={selectedMainFeature !== ""}>Please select main feature</option>
-                    {mainFeatures.map(item => (
-                      <option value={item.value} selected={item.value === selectedMainFeature}>{item.label}</option>
-                    ))}
-                  </Input>
+                  <Input type="text" name="date" value={this.state.selectedProject.date} disabled={true}/>
                 </Col>
               </FormGroup>
 
               <FormGroup row>
                 <Label sm={3}>Task description</Label>
                 <Col sm={9}>
-                  <Input type="textarea" name="description" placeholder="Description" value={description}
-                         onChange={this.onTextChange}/>
+                  <Input type="textarea" name="description" placeholder="Description"
+                         value={this.state.selectedProject.description} disabled={true}/>
                 </Col>
               </FormGroup>
 
-              <FormGroup row>
-                <Label sm={3}>Number of hours</Label>
-                <Row className="pl-3">
-                  <Col sm={3}>
-                    <Input type="number" name="hours" placeholder="Hours"
-                           value={hours}
-                           onChange={this.onTextChange}/>
-                  </Col>
-                  <Col sm={3} className="pl-0 ml-0">
-                    <Input type="number" name="minutes" placeholder="Minutes"
-                           value={minutes}
-                           onChange={this.onTextChange}/>
-                  </Col>
-                </Row>
+              {this.state.selectedProject.numOfHours && (
+                <FormGroup row>
+                  <Label sm={3}>Number of hours</Label>
+                  <Row className="pl-3">
+                    <Col sm={3}>
+                      <Input type="text" name="hours" placeholder="Hours"
+                             value={this.state.selectedProject.numOfHours.split('.')[0]} disabled={true}/>
+                    </Col>
+                    <Col sm={3} className="pl-0 ml-0">
+                      <Input type="text" name="minutes" placeholder="Minutes"
+                             value={this.state.selectedProject.numOfHours.split('.')[1]} disabled={true}/>
+                    </Col>
+                  </Row>
 
-              </FormGroup>
+                </FormGroup>
+              )}
+
 
               <FormGroup row>
                 <Label sm={3}>Task type</Label>
                 <Col sm={5}>
-                  <Input type="select" name="selectedTaskType" onChange={this.onTextChange}>
-                    <option value="" disabled={selectedTaskType !== ""}>Select Task</option>
-                    {taskType.map(item => (
-                      <option value={item.value} selected={item.value === selectedTaskType}>{item.label}</option>
-                    ))}
-                  </Input>
+                  <Input type="text" name="date" value={this.state.selectedProject.taskType} disabled={true}/>
                 </Col>
               </FormGroup>
 
               <FormGroup row>
                 <Label sm={3}>Comment</Label>
                 <Col sm={9}>
-                  <Input type="textarea" name="comment" placeholder="Comments" value={comment}
-                         onChange={this.onTextChange}/>
+                  <Input type="textarea" name="comment" placeholder="Comments"
+                         value={this.state.selectedProject.comment} disabled={true}/>
                 </Col>
               </FormGroup>
             </Form>
@@ -318,9 +282,7 @@ class TaskHistory extends Component {
           </ModalBody>
 
           <ModalFooter>
-            <Button color="secondary" onClick={this.onTogglePopup}>Cancel</Button>
-            <Button color="primary"
-                    onClick={this.onSaveProduct}>{'Submit'}</Button>
+            <Button color="danger" onClick={this.onTogglePopup}>Close</Button>
           </ModalFooter>
         </Modal>
 
