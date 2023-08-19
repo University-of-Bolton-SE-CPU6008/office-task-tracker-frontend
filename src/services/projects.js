@@ -35,3 +35,15 @@ export async function getProjectByEmployee(id) {
   apiObject.body = null;
   return await ApiService.callApi(apiObject);
 }
+
+export async function getAllProjectWithoutInvolve() {
+  const apiObject = {};
+  apiObject.method = 'GET';
+  apiObject.authentication = true;
+  apiObject.isBasicAuth = false;
+  apiObject.urlencoded = false;
+  apiObject.endpoint = `all-active-projects`;
+  apiObject.multipart = false;
+  apiObject.body = null;
+  return await ApiService.callApi(apiObject);
+}

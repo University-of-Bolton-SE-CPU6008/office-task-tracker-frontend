@@ -60,10 +60,11 @@ class AddTask extends Component {
     projects: [],
     designationTypes: [],
     mainFeatures: [],
+    needToInvolveProj: [],
     selectedTaskType: '',
     selectedProject: {},
     selectedInvolveProject: '',
-    selectedDesignation: {label:'QA',value:1},
+    selectedDesignation: {},
     selectedMainFeature: '',
     employeeId: '',
     today: ""
@@ -85,11 +86,11 @@ class AddTask extends Component {
 
     this.setState({today: currentDate.toString()})
 
+    this.getAllProjects()
     this.getAllInvolveProjects()
     // this.getAllTasks()
-    this.getAllDesignations()
+
     this.getAllTaskTypes()
-    this.getAllProjects()
     await this.getEmployeeDetails()
   }
 
@@ -98,29 +99,24 @@ class AddTask extends Component {
     EmployeeService.getEmployeeFindById(userId)
       .then(res => {
         if (res.success) {
-
+          this.setState({employeeId: res.data.user.employee.id})
+          this.getAllDesignations(res.data.user.employee.designation_id)
         }
       })
   }
 
   getAllInvolveProjects = () => {
-    const data = {"all": 1}
-    this.setState({loading: true})
-    ProjectService.getAllProjects(data)
+    ProjectService.getAllProjectWithoutInvolve()
       .then(res => {
         if (res.success) {
           const list = [];
           res.data.project_list.map((item) => {
             list.push({
-              projectId: item.id,
-              projectName: item.name,
-              designation: 'Frontend Developer'
+              value: item.id,
+              label: item.name
             })
           })
-          this.setState({loading: false, list})
-        } else {
-          CommonFunc.notifyMessage(res.message);
-          this.setState({loading: false})
+          this.setState({needToInvolveProj: list})
         }
       })
   }
@@ -156,7 +152,7 @@ class AddTask extends Component {
       })
   }
 
-  getAllDesignations = () => {
+  getAllDesignations = (id) => {
     const data = {"all": 1}
     DesignationService.getAllDesignations(data)
       .then(res => {
@@ -167,6 +163,15 @@ class AddTask extends Component {
               label: item.designation_name,
               value: item.id
             })
+
+            if (id === item.id) {
+              this.setState({
+                selectedDesignation: {
+                  label: item.designation_name,
+                  value: item.id
+                }
+              })
+            }
           })
           this.setState({designationTypes: list})
         }
@@ -175,17 +180,21 @@ class AddTask extends Component {
 
   getAllProjects = () => {
     const data = {"all": 1}
+    this.setState({loading: true})
     ProjectService.getAllProjects(data)
       .then(res => {
         if (res.success) {
           const list = [];
           res.data.project_list.map((item) => {
             list.push({
-              value: item.id,
-              label: item.name,
+              projectId: item.id,
+              projectName: item.name
             })
           })
-          this.setState({projects: list})
+          this.setState({loading: false, list})
+        } else {
+          CommonFunc.notifyMessage(res.message);
+          this.setState({loading: false})
         }
       })
   }
@@ -253,6 +262,7 @@ class AddTask extends Component {
           if (res.success) {
             this.onTogglePopup()
             this.setState({loading: false})
+            CommonFunc.notifyMessage("Task added successful!", 1);
           } else {
             CommonFunc.notifyMessage(res.message);
             this.setState({loading: false})
@@ -267,47 +277,39 @@ class AddTask extends Component {
 
   }
 
-  // async deleteHandler(id) {
-  //   swal({
-  //     title: "Are you sure?",
-  //     text: "Are you sure you want to delete this product?",
-  //     icon: "warning",
-  //     buttons: true,
-  //     dangerMode: true,
-  //     className: "swal-footer"
-  //   })
-  //     .then((willDelete) => {
-  //       if (willDelete) {
-  //         this.onDeleteProduct(id)
-  //       }
-  //     });
-  // }
 
-  // onDeleteProduct = async (id) => {
-  //   this.setState({loading: true})
-  //   await TasksService.deleteProduct(id)
-  //     .then(res => {
-  //       if (res.success) {
-  //         CommonFunc.notifyMessage('Product has been deleted!', 1);
-  //         this.getAllProducts()
-  //       } else {
-  //         CommonFunc.notifyMessage(res.message, 0);
-  //         this.setState({loading: false})
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.log(err)
-  //       this.setState({loading: false})
-  //     })
-  // }
+  onInvolveProject = async () => {
+
+    if (!Validations.textFieldValidator(this.state.selectedInvolveProject, 1)) {
+      CommonFunc.notifyMessage('Please select involve project you wish', 0);
+    } else {
+      this.setState({loading: true})
+      const data = {
+        projectId:this.state.selectedInvolveProject,
+        designationId: this.state.selectedDesignation.value
+      }
+      await TasksService.getAllTasksType()
+        .then(res => {
+          if (res.success) {
+            this.setState({involveProjectVisible: false})
+
+            CommonFunc.notifyMessage('Project has been involved!', 1);
+            this.getAllProjects()
+          } else {
+            CommonFunc.notifyMessage(res.message, 0);
+            this.setState({loading: false})
+          }
+        })
+    }
+  }
 
   render() {
-    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, selectedDesignation, hours, minutes, comment, selectedInvolveProject} = this.state;
+    const {totalElements, list, searchTxt, modelVisible, loading, asSearch, selectedPage, selectedMainFeature, mainFeatures, description, involveProjectVisible, taskType, projects, selectedProject, selectedTaskType, designationTypes, needToInvolveProj, selectedDesignation, hours, minutes, comment, selectedInvolveProject} = this.state;
 
     const listData = list.map((items, i) => (
       <tr key={i}>
         <td className={"DescriptionTD"}>{items.projectName}</td>
-        <td className={"DescriptionTD"}>{items.designation}</td>
+        <td className={"DescriptionTD"}>{selectedDesignation.label}</td>
         <td className={'btn-align'}>
           <Button color="dark" className="btn-pill shadow" onClick={() => this.onTogglePopup(items, true)}>Add
             Task</Button>
@@ -365,26 +367,39 @@ class AddTask extends Component {
         <Modal size={'sm'} isOpen={involveProjectVisible}
                toggle={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}
                className={'modal-lg ' + this.props.className}>
-          <ModalHeader toggle={() => this.setState({involveProjectVisible: !this.state.involveProjectVisible})}>Involved
+          <ModalHeader toggle={() => this.setState({
+            involveProjectVisible: !this.state.involveProjectVisible,
+            selectedInvolveProject: ""
+          })}>Involved
             to new Project</ModalHeader>
           <ModalBody className="pl-5 pr-5">
             <FormGroup row className="pl-5 pr-5">
               <Label>Select the project</Label>
               <Input type="select" name="selectedInvolveProject" onChange={this.onTextChange}>
                 <option value="" disabled={selectedInvolveProject !== ""}>Select Project</option>
-                {projects.map(item => (
+                {needToInvolveProj.map(item => (
                   <option value={item.value} selected={item.value === selectedInvolveProject}>{item.label}</option>
                 ))}
               </Input>
             </FormGroup>
             <FormGroup row className="pl-5 pr-5">
               <Label>Designation</Label>
-              <Input type="text" name="selectedDesignation" disabled={true} value={selectedDesignation}/>
+              <Input type="text" name="selectedDesignation" disabled={true} value={selectedDesignation.label}/>
             </FormGroup>
           </ModalBody>
           <ModalFooter>
+            <Button color="secondary"
+                    onClick={() => {
+                      this.setState({
+                        involveProjectVisible: !this.state.involveProjectVisible,
+                        selectedInvolveProject: ""
+                      })
+                    }}
+            >
+              Close
+            </Button>
             <Button color="primary"
-                    onClick={() => this.setState({involveProjectVisible: false})}
+                    onClick={() => this.onInvolveProject()}
             >
               Done
             </Button>
