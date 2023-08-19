@@ -47,3 +47,15 @@ export async function getAllProjectWithoutInvolve() {
   apiObject.body = null;
   return await ApiService.callApi(apiObject);
 }
+
+export async function updateProjects(body) {
+  const apiObject = {};
+  apiObject.method = 'PUT';
+  apiObject.authentication = true;
+  apiObject.isBasicAuth = false;
+  apiObject.urlencoded = false;
+  apiObject.endpoint = `project/update`;
+  apiObject.multipart = false;
+  apiObject.body = body;
+  return await ApiService.callApi(apiObject);
+}

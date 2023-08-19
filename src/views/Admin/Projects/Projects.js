@@ -38,8 +38,8 @@ class Projects extends Component {
         status: true
       }
     ],
-    selectedData: {},
     projectName: '',
+    projectId:'',
     modelVisible: false,
     isEdit: false,
     loading: false,
@@ -82,7 +82,7 @@ class Projects extends Component {
   onTogglePopup = (item, isEdit) => {
     this.setState({modelVisible: !this.state.modelVisible, projectName: '',status:false})
     if (item) {
-      this.setState({selectedData: item})
+      this.setState({projectName:item.projectName , status:item.status,projectId:item.id})
     }
     if (isEdit) {
       this.setState({isEdit})
@@ -97,12 +97,12 @@ class Projects extends Component {
       CommonFunc.notifyMessage("Please enter project name", 0);
     } else {
       this.setState({loading: true})
-      const data = {
-        name: this.state.projectName,
-        status: this.state.status
-      }
 
       if (!this.state.isEdit){
+        const data = {
+          name: this.state.projectName,
+          status: this.state.status
+        }
         ProjectService.createProjects(data)
           .then(res => {
             if (res.success) {
@@ -115,7 +115,22 @@ class Projects extends Component {
             }
           })
       }else {
-
+        const data = {
+          id:this.state.projectId,
+          name: this.state.projectName,
+          status: this.state.status
+        }
+        ProjectService.updateProjects(data)
+          .then(res => {
+            if (res.success) {
+              CommonFunc.notifyMessage("Record Updated", 1);
+              this.onTogglePopup();
+              this.getAllProjects();
+            } else {
+              CommonFunc.notifyMessage(res.message);
+              this.setState({loading: false})
+            }
+          })
       }
 
     }
@@ -178,20 +193,16 @@ class Projects extends Component {
                 <Label sm={3}>Project Name</Label>
                 <Col sm={6}>
                   <Input type="text" name="projectName" placeHolder={"Project Name"} onChange={this.onTextChange}
-                         value={this.state.selectedData.projectName}/>
+                         value={this.state.projectName}/>
                 </Col>
               </FormGroup>
               <FormGroup row className="mt-4">
                 <Label sm={3}>Status</Label>
                 <Col sm={4}>
                   <AppSwitch variant={'pill'} label color={'success'} size={'lg'}
-                             checked={this.state.selectedData.status}
-                             onChange={(item) => {
-                               if (this.state.isEdit){
-                                 this.setState({status:!this.state.selectedData.status})
-                               }else {
-                                 this.setState({status:!this.state.status})
-                               }
+                             checked={this.state.status}
+                             onChange={() => {
+                               this.setState({status:!this.state.status})
                              }}/>
                 </Col>
               </FormGroup>
