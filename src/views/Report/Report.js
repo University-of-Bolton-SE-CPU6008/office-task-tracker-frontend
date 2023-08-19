@@ -11,7 +11,8 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 class Report extends Component {
 
   state = {
-    loading: false
+    loading: false,
+    list:[]
   }
 
   componentDidMount() {
@@ -24,7 +25,13 @@ class Report extends Component {
       .then(res => {
         console.log(res)
         if (res.success) {
-          this.setState({loading: false})
+          const list=[];
+          res.data.map(item=>{
+            list.push({
+              label: item.date, y: Number(item.num_of_hours)
+            })
+          })
+          this.setState({loading: false,list})
         } else {
           CommonFunc.notifyMessage(res.message);
           this.setState({loading: false})
@@ -41,13 +48,7 @@ class Report extends Component {
         {
           // Change type to "doughnut", "line", "splineArea", etc.
           type: "column",
-          dataPoints: [
-            {label: "2023/06/07", y: 10},
-            {label: "2023/06/08", y: 6},
-            {label: "2023/06/09", y: 8},
-            {label: "2023/06/10", y: 3},
-            {label: "2023/06/11", y: 12}
-          ]
+          dataPoints: this.state.list
         }
       ],
       axisY: {
