@@ -47,3 +47,15 @@ export async function getEmployeeFindById(id) {
   apiObject.body = null;
   return await ApiService.callApi(apiObject);
 }
+
+export async function involveByEmployee(body) {
+  const apiObject = {};
+  apiObject.method = 'POST';
+  apiObject.authentication = true;
+  apiObject.isBasicAuth = false;
+  apiObject.urlencoded = false;
+  apiObject.endpoint = `involve`;
+  apiObject.multipart = false;
+  apiObject.body = body;
+  return await ApiService.callApi(apiObject);
+}

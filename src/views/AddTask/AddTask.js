@@ -285,18 +285,17 @@ class AddTask extends Component {
     } else {
       this.setState({loading: true})
       const data = {
-        projectId:this.state.selectedInvolveProject,
-        designationId: this.state.selectedDesignation.value
+        project_id: Number(this.state.selectedInvolveProject),
+        employer_id: this.state.employeeId
       }
-      await TasksService.getAllTasksType()
+      await EmployeeService.involveByEmployee(data)
         .then(res => {
           if (res.success) {
-            this.setState({involveProjectVisible: false})
-
+            this.setState({involveProjectVisible: false,selectedInvolveProject:''})
             CommonFunc.notifyMessage('Project has been involved!', 1);
             this.getAllProjects()
           } else {
-            CommonFunc.notifyMessage(res.message, 0);
+            CommonFunc.notifyMessage("Project involve failed!", 0);
             this.setState({loading: false})
           }
         })
