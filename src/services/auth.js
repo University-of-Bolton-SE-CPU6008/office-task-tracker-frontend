@@ -41,10 +41,10 @@ export async function renewToken(token) {
 export async function updatePassword(body){
   const apiObject = {};
   apiObject.method = 'POST';
-  apiObject.authentication = false;
+  apiObject.authentication = true;
   apiObject.isBasicAuth = false;
   apiObject.urlencoded = false;
-  apiObject.endpoint = `auth/update-password`;
+  apiObject.endpoint = `user/change-password`;
   apiObject.multipart = false;
   apiObject.body = body;
   return await ApiService.callApi(apiObject);

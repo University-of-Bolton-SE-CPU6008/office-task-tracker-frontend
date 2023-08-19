@@ -132,10 +132,10 @@ const renewTokenHandler = async (apiObject) => {
       } else {
         result = await response;
         swal({
-          title: response.message,
+          title: "You are not authorized to access this application",
           icon: null,
           closeOnClickOutside: false,
-          buttons: {dangerMode: {text: "Okay", value: "action"}}
+          buttons: {dangerMode: {text: "Logout", value: "action"}}
         })
           .then((value) => {
             switch (value) {

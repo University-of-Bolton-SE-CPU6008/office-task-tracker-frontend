@@ -6,6 +6,7 @@ import * as Validation from "../../../validation/Validation";
 import * as CommonFunc from "../../../utils/CommonFunc";
 import {StorageStrings} from "../../../constance/StorageStrings";
 import Loader from "../../../components/Loader/loading";
+import * as authService from "../../../services/auth";
 
 class ResetPw extends Component {
   state = {
@@ -45,25 +46,22 @@ class ResetPw extends Component {
       CommonFunc.notifyMessage('Passwords do not match,try again..!', 0);
     } else {
       this.setState({loading: true});
-      // UserService.changePassword({
-      //   userId: localStorage.getItem(StorageStrings.USERID),
-      //   oldPassword: this.state.oldPassword.value,
-      //   newPassword: this.state.newPassword.value
-      // })
-      //   .then(response => {
-      //     if (response.success) {
-      //       CommonFunc.notifyMessage('Password has been changed successfully', 1);
-      //       this.setState({loading: false});
-      //       this.props.history.push(BASE_URL + '/dashboard');
-      //     } else {
-      //       this.setState({loading: false});
-      //       CommonFunc.notifyMessage(response.message)
-      //     }
-      //   })
-      //   .catch(error => {
-      //     this.setState({loading: false});
-      //     CommonFunc.notifyMessage(error.message, 1)
-      //   })
+      authService.updatePassword({
+        user_id: Number(localStorage.getItem(StorageStrings.USERID)),
+        old_password: this.state.oldPassword.value,
+        password: this.state.newPassword.value,
+        password_confirmation:this.state.confirmPassword.value
+      })
+        .then(response => {
+          if (response.success) {
+            CommonFunc.notifyMessage('Password has been changed successfully', 1);
+            this.setState({loading: false});
+            this.props.history.push(BASE_URL + '/add-task');
+          } else {
+            this.setState({loading: false});
+            CommonFunc.notifyMessage(response.message)
+          }
+        })
     }
   }
 
